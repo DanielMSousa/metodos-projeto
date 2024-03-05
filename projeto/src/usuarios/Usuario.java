@@ -36,6 +36,16 @@ public abstract class Usuario{
         return novo_usuario;
     }
 
+    //Método para listar usuários
+    public static void listarUsuarios(){
+        for(Usuario usuario: usuarios){
+            System.out.println("ID: " + usuario.getId());
+            System.out.println("Nome: " + usuario.getNome());
+            System.out.println("Nivel de Acesso: " + usuario.getNivelAcesso());
+            System.out.println("--------------------------");
+
+        }
+    }
     //Getters and Setters
     public int getId() {
         return this.id;
