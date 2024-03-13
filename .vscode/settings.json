@@ -1,0 +1,4 @@
+{
+    "java.project.referencedLibraries": [
+        "metodos-projeto/projeto/libs/mysql-connector-java-8.3.0.jar"    ]
+}
