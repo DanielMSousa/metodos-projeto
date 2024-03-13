@@ -11,7 +11,7 @@ public class UsuarioManager {
     }
     //metodo para adicionar usuario
     public void adicionarUsuario(Usuario usuario){
-        UsuarioService conexao  = new UsuarioService("localhost:3306", "metodosProj_DB", "root", "Youngmull4!");
+        UsuarioService conexao  = new UsuarioService("localhost:3306", "metodosProj_DB", "root", "SUASENHA");
         usuarios.add(usuario);
         conexao.inserirUsuario(usuario.getNome(), usuario.getNivelAcesso(), usuario.getLogin(), usuario.getSenha());
         System.out.println("Usuário adicionado " + usuario.getNome());
