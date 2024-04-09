@@ -1,5 +1,5 @@
-import src.Controle.UsuarioController;
-import src.Fronteira.*;
+import src.Controller.UsuarioController;
+import src.View.*;
 
 public class Main{
     public static void main(String[] args){
