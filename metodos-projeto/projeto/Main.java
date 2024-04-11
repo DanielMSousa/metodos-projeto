@@ -1,12 +1,9 @@
-import src.Controller.UsuarioController;
-import src.View.*;
+import src.View.UsuarioFronteira;
 
-public class Main{
-    public static void main(String[] args){
-        UsuarioController usuarioController = new UsuarioController();
-        UsuarioFronteira usuarioFronteira = new UsuarioFronteira(usuarioController);
+public class Main {
+    public static void main(String[] args) {
+        UsuarioFronteira usuarioFronteira = new UsuarioFronteira(); // Passa a fachada para o construtor
 
         usuarioFronteira.cadastrarNovoUsuario();
-        usuarioFronteira.listarUsuarios();
     }
 }

@@ -1,14 +1,16 @@
 package src.View;
-import java.util.Scanner;
 
+import java.util.Scanner;
+import src.Utils.TipoUsuarios;
+import src.Facade.UserEquipeFacade;
 import src.UsuarioAbstracao.UsuarioController;
 
 public class UsuarioFronteira {
-    private UsuarioController usuarioController;
+    private UserEquipeFacade facade;
     private Scanner scanner;
 
-    public UsuarioFronteira(UsuarioController usuarioController) {
-        this.usuarioController = usuarioController;
+    public UsuarioFronteira() {
+        this.facade = UserEquipeFacade.getInstance();
         this.scanner = new Scanner(System.in);
     }
 
@@ -20,26 +22,23 @@ public class UsuarioFronteira {
         scanner.nextLine(); // Limpar o buffer
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
-        System.out.print("Nível de Acesso: ");
-        String nivelAcesso = scanner.nextLine();
         System.out.print("Login: ");
         String login = scanner.nextLine();
         System.out.print("Senha: ");
         String senha = scanner.nextLine();
+        System.out.print("Nível de Acesso (analista/gerente/programador): ");
+        String nivelAcesso = scanner.nextLine().toLowerCase();
+        // Obter o tipo de usuário com base no nível de acesso
 
-        // Chamar o método do controlador para criar um novo usuário
+        // Chamar o método da fachada para criar um novo usuário
         try {
-            usuarioController.criarNovoUsuario(id, nome, nivelAcesso, login, senha);
+            facade.criarUsuario(nivelAcesso, nome, login, senha);
         } catch (IllegalArgumentException e) {
             System.err.println("Erro ao cadastrar novo usuário: " + e.getMessage());
         }
     }
 
-    // Método para listar usuários
-    public void listarUsuarios() {
-        System.out.println("Lista de Usuários:");
-        usuarioController.listarUsuarios();
-    }
+    // Método para obter o tipo de usuário com base no nível de acesso inserido pelo usuário
 
     // Outros métodos para interagir com os usuários, se necessário
 }
