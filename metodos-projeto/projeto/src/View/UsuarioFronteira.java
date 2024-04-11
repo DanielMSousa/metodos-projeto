@@ -1,9 +1,7 @@
 package src.View;
 
 import java.util.Scanner;
-import src.Utils.TipoUsuarios;
 import src.Facade.UserEquipeFacade;
-import src.UsuarioAbstracao.UsuarioController;
 
 public class UsuarioFronteira {
     private UserEquipeFacade facade;
@@ -17,9 +15,6 @@ public class UsuarioFronteira {
     // Método para coletar dados de um novo usuário do usuário
     public void cadastrarNovoUsuario() {
         System.out.println("Cadastro de Novo Usuário:");
-        System.out.print("ID: ");
-        int id = scanner.nextInt();
-        scanner.nextLine(); // Limpar o buffer
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
         System.out.print("Login: ");
