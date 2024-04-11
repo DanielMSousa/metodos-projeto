@@ -1,0 +1,21 @@
+@startuml equipeEusuarios
+
+package "src.Equipe" {
+    class EquipeController {
+        - instance: EquipeController
+        + getInstance(): EquipeController
+        + criarEquipe(gerente: GerenteModel, listaProgramador: List<ProgramadorModel>, analistaSistemas: AnalistaSistemasModel): EquipeModel
+    }
+
+    class EquipeModel {
+        - gerente: GerenteModel
+        - listaProgramador: List<ProgramadorModel>
+        - analistaSistemas: AnalistaSistemasModel
+    }
+}
+
+ProgramadorModel --* EquipeModel
+GerenteModel --* EquipeModel
+AnalistaSistemasModel --* EquipeModel
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml Exception e Interacoes
+
+package "src.Facade" {
+    class UserEquipeFacade {
+        + criarUsuario(String, String, String, String): UsuarioAbstrato
+    }
+
+    UserEquipeFacade ..> LoginInvalidoException
+    UserEquipeFacade ..> SenhaInvalidaException
+}
+
+package "src.Programador" {
+    class ProgramadorController {
+        + criarNovoUsuario(nome: String, login: String, senha: String): ProgramadorModel
+        + alterarDisponibilidade(usuario: ProgramadorModel): void
+        + removerUsuario(usuario: ProgramadorModel): void
+        + obterGerentes(): List<GerenteModel>
+        + recuperarGerente(): GerenteModel
+    }
+
+    ProgramadorController --> UserEquipeFacade
+}
+
+package "src.Gerente" {
+    class GerenteController {
+        + criarNovoUsuario(nome: String, login: String, senha: String): GerenteModel
+        + obterGerentes(): List<GerenteModel>
+        + recuperarGerente(): GerenteModel
+    }
+
+    GerenteController --> UserEquipeFacade
+}
+
+package "src.AnalistaSistemas" {
+    class AnalistaSistemasController {
+        + criarNovoUsuario(nome: String, login: String, senha: String): AnalistaSistemasModel
+    }
+
+    AnalistaSistemasController --> UserEquipeFacade
+}
+
+@enduml

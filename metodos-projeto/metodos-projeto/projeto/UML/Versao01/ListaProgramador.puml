@@ -1,0 +1,83 @@
+@startuml
+package "UsuarioAbstracao.Listas" {
+    abstract class UsuarioDisponivelLista<T> {
+        - listaUsuarios: List<T>
+        - tamanhoLista: int
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+        {abstract} + adicionarUsuario(usuario: T): void
+        {abstract} + removerUsuario(usuario: T): void
+    }
+    abstract class UsuariosNaoDisponivelLista<T> {
+        - listaUsuarios: List<T>
+        - tamanhoLista: int
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+        {abstract} + adicionarUsuario(usuario: T): void
+        {abstract} + removerUsuario(usuario: T): void
+    }
+    interface UsuarioListaModelInterface<T> {
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+    }
+    class UsuarioListaModel<T> {
+        - listaProgramadores: List<T>
+        - tamanhoLista: int
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+    }
+}
+package "Programador.Listas" {
+    class ControllerProgramadoresDisponiveis {
+        - instance: ControllerProgramadoresDisponiveis
+        - lista: ProgramadoresDisponiveis
+        + getInstance(): ControllerProgramadoresDisponiveis
+        + adicionarUsuario(usuario: ProgramadorModel): void
+        + removerUsuario(usuario: ProgramadorModel): void
+        + getUsuarioPorNome(nome: String): ProgramadorModel
+        + getListaUsuarios(): List<ProgramadorModel>
+        + listarProgramadoresDisponiveis(): void
+    }
+    class ControllerProgramadoresEmProjeto {
+        - instance: ControllerProgramadoresEmProjeto
+        - lista: ProgramadoresEmProjeto
+        + getInstance(): ControllerProgramadoresEmProjeto
+        + adicionarUsuario(usuario: ProgramadorModel): void
+        + removerUsuario(usuario: ProgramadorModel): void
+        + getUsuarioPorNome(nome: String): ProgramadorModel
+        + getListaUsuarios(): List<ProgramadorModel>
+        + listarProgramadoresEmProjeto(): void
+    }
+    class ProgramadoresDisponiveis {
+        - instance: ProgramadoresDisponiveis
+        - listaProgramadores: List<ProgramadorModel>
+        + getInstance(listaProgramadores: List<ProgramadorModel>): ProgramadoresDisponiveis
+    }
+    class ProgramadoresEmProjeto {
+        - instance: ProgramadoresEmProjeto
+        - listaProgramadores: List<ProgramadorModel>
+        + getInstance(listaProgramadores: List<ProgramadorModel>): ProgramadoresEmProjeto
+    }
+}
+
+ControllerProgramadoresDisponiveis --|> UsuarioDisponivelLista
+ControllerProgramadoresEmProjeto --|> UsuariosNaoDisponivelLista
+
+ControllerProgramadoresDisponiveis o-- ProgramadoresDisponiveis
+ControllerProgramadoresEmProjeto o-- ProgramadoresEmProjeto
+
+UsuarioDisponivelLista --|> UsuarioListaModelInterface
+UsuariosNaoDisponivelLista --|> UsuarioListaModelInterface
+
+UsuarioListaModel --|> UsuarioListaModelInterface
+ControllerProgramadoresDisponiveis --|> UsuarioListaModel
+ControllerProgramadoresEmProjeto --|> UsuarioListaModel
+@enduml

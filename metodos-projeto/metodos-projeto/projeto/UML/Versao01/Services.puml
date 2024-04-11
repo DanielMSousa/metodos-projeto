@@ -1,0 +1,57 @@
+@startuml Services
+
+package "src.Programador.Services" {
+    interface ProgramadorServiceInterface {
+        + criarProgramador(nome: String, login: String, senha: String): ProgramadorModel
+        + alterarDisponibilidade(usuario: ProgramadorModel): void
+        + removerProgramador(usuario: ProgramadorModel): void
+        + obterGerentes(): List<GerenteModel>
+        + recuperarGerente(): GerenteModel
+    }
+
+    class ProgramadorService {
+        - instance: ProgramadorService
+        + getInstance(): ProgramadorService
+        + criarProgramador(nome: String, login: String, senha: String): ProgramadorModel
+        + alterarDisponibilidade(usuario: ProgramadorModel): void
+        + removerProgramador(usuario: ProgramadorModel): void
+        + obterGerentes(): List<GerenteModel>
+        + recuperarGerente(): GerenteModel
+    }
+}
+
+package "src.Gerente.Services" {
+    interface GerenteServiceInterface {
+        + criarGerente(nome: String, login: String, senha: String): GerenteModel
+        + obterGerentes(): List<GerenteModel>
+        + recuperarGerente(): GerenteModel
+    }
+
+    class GerenteService {
+        - instance: GerenteService
+        + getInstance(): GerenteService
+        + criarGerente(nome: String, login: String, senha: String): GerenteModel
+        + obterGerentes(): List<GerenteModel>
+        + recuperarGerente(): GerenteModel
+    }
+}
+
+package "src.AnalistaSistemas.Services" {
+    interface AnalistaSistemasServiceInterface {
+        + criarAnalista(nome: String, login: String, senha: String): AnalistaSistemasModel
+        + obterAnalistas(): List<AnalistaSistemasModel>
+    }
+
+    class AnalistaSistemasService {
+        - instance: AnalistaSistemasService
+        + getInstance(): AnalistaSistemasService
+        + criarAnalista(nome: String, login: String, senha: String): AnalistaSistemasModel
+        + obterAnalistas(): List<AnalistaSistemasModel>
+    }
+}
+
+ProgramadorService o--> ProgramadorServiceInterface
+GerenteService o--> GerenteServiceInterface
+AnalistaSistemasService o--> AnalistaSistemasServiceInterface
+
+@enduml

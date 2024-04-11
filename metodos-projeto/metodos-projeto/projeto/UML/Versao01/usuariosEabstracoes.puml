@@ -1,0 +1,98 @@
+@startuml usuarioEabstracoes
+
+package "src.UsuarioAbstracao" {
+    interface UsuarioInterface {
+        + getNome(): String
+        + setNome(nome: String): void
+        + getNivelAcesso(): String
+        + setNivelAcesso(nivelAcesso: String): void
+        + getLogin(): String
+        + setLogin(login: String): void
+        + getSenha(): String
+        + setSenha(senha: String): void
+        + getDisponivel(): boolean
+        + setDisponivel(disponivel: boolean): void
+    }
+
+    abstract class UsuarioAbstrato {
+        - nome: String
+        - nivelAcesso: String
+        - login: String
+        - senha: String
+        - disponivel: boolean
+    }
+
+    interface UsuarioController {
+        + criarNovoUsuario(nome: String, login: String, senha: String): UsuarioAbstrato
+    }
+}
+
+package "src.View" {
+    class UsuarioFronteira {
+        - facade: UserEquipeFacade
+        - scanner: Scanner
+        + UsuarioFronteira()
+        + cadastrarNovoUsuario(): void
+    }
+}
+
+package "src.Programador" {
+    class ProgramadorModel {
+        + ProgramadorModel(nome: String)
+    }
+
+    class ProgramadorController {
+        - instance: ProgramadorController
+        - listaProgramadoresDisponiveisController: ProgramadoresDisponiveisController
+        - listaProgramadoresEmProjetoController: ProgramadoresEmProjetoController
+        + getInstance(): ProgramadorController
+        + criarNovoUsuario(nome: String, login: String, senha: String): ProgramadorModel
+        + alterarDisponibilidade(usuario: ProgramadorModel): void
+        + removerUsuario(usuario: ProgramadorModel): void
+        + obterGerentes(): List<GerenteModel>
+        + recuperarGerente(): GerenteModel
+    }
+}
+
+package "src.Gerente" {
+    class GerenteModel {
+        + GerenteModel(nome: String)
+    }
+
+    class GerenteController {
+        - instance: GerenteController
+        + getInstance(): GerenteController
+        + criarNovoUsuario(nome: String, login: String, senha: String): GerenteModel
+        + obterGerentes(): List<GerenteModel>
+        + recuperarGerente(): GerenteModel
+    }
+}
+
+package "src.AnalistaSistemas" {
+    class AnalistaSistemasModel {
+        + AnalistaSistemasModel(nome: String)
+    }
+
+    class AnalistaSistemasController {
+        - instance: AnalistaSistemasController
+        + getInstance(): AnalistaSistemasController
+        + criarNovoUsuario(nome: String, login: String, senha: String): AnalistaSistemasModel
+        + obterAnalistas(): List<AnalistaSistemasModel>
+        + recuperarAnalista(): AnalistaSistemasModel
+    }
+}
+
+UsuarioAbstrato <|-- ProgramadorModel
+UsuarioAbstrato <|-- GerenteModel
+UsuarioAbstrato <|-- AnalistaSistemasModel
+
+ProgramadorModel --> ProgramadorController
+GerenteModel --> GerenteController
+AnalistaSistemasModel --> AnalistaSistemasController
+UsuarioFronteira --> UsuarioController
+ProgramadorController -up-> UsuarioController
+GerenteController -up-> UsuarioController
+AnalistaSistemasController -up-> UsuarioController
+UsuarioInterface <|.. UsuarioAbstrato
+
+@enduml

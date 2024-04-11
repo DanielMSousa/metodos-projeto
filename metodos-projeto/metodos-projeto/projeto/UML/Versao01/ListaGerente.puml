@@ -1,0 +1,83 @@
+@startuml
+package "UsuarioAbstracao.Listas" {
+    abstract class UsuarioDisponivelLista<T> {
+        - listaUsuarios: List<T>
+        - tamanhoLista: int
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+        {abstract} + adicionarUsuario(usuario: T): void
+        {abstract} + removerUsuario(usuario: T): void
+    }
+    abstract class UsuariosNaoDisponivelLista<T> {
+        - listaUsuarios: List<T>
+        - tamanhoLista: int
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+        {abstract} + adicionarUsuario(usuario: T): void
+        {abstract} + removerUsuario(usuario: T): void
+    }
+    interface UsuarioListaModelInterface<T> {
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+    }
+    class UsuarioListaModel<T> {
+        - listaProgramadores: List<T>
+        - tamanhoLista: int
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+    }
+}
+package "Gerente.Listas" {
+    class ControllerGerentesDisponiveis {
+        - instance: ControllerGerentesDisponiveis
+        - lista: GerentesDisponivel
+        + getInstance(): ControllerGerentesDisponiveis
+        + adicionarUsuario(usuario: AnalistaSistemasModel): void
+        + removerUsuario(usuario: AnalistaSistemasModel): void
+        + getUsuarioPorNome(nome: String): AnalistaSistemasModel
+        + getListaUsuarios(): List<AnalistaSistemasModel>
+        + listarGerentesDisponiveis(): void
+    }
+    class ControllerGerenteEmProjeto {
+        - instance: ControllerGerenteEmProjeto
+        - lista: GerentesEmProjeto
+        + getInstance(): ControllerGerenteEmProjeto
+        + adicionarUsuario(usuario: AnalistaSistemasModel): void
+        + removerUsuario(usuario: AnalistaSistemasModel): void
+        + getUsuarioPorNome(nome: String): AnalistaSistemasModel
+        + getListaUsuarios(): List<AnalistaSistemasModel>
+        + listarGerentesDisponivel(): void
+    }
+    class GerentesDisponivel {
+        - instance: GerentesDisponivel
+        - listaGerentes: List<AnalistaSistemasModel>
+        + getInstance(listaGerentes: List<AnalistaSistemasModel>): GerentesDisponivel
+    }
+    class GerentesEmProjeto {
+        - instance: GerentesEmProjeto
+        - listaGerentes: List<AnalistaSistemasModel>
+        + getInstance(listaGerentes: List<AnalistaSistemasModel>): GerentesEmProjeto
+    }
+}
+
+ControllerGerentesDisponiveis --|> UsuarioDisponivelLista
+ControllerGerenteEmProjeto --|> UsuariosNaoDisponivelLista
+
+ControllerGerentesDisponiveis o-- GerentesDisponivel
+ControllerGerenteEmProjeto o-- GerentesEmProjeto
+
+UsuarioDisponivelLista --|> UsuarioListaModelInterface
+UsuariosNaoDisponivelLista --|> UsuarioListaModelInterface
+
+UsuarioListaModel --|> UsuarioListaModelInterface
+ControllerGerentesDisponiveis --|> UsuarioListaModel
+ControllerGerenteEmProjeto --|> UsuarioListaModel
+@enduml

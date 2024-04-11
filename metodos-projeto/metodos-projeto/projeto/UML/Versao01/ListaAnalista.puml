@@ -1,0 +1,83 @@
+@startuml
+package "UsuarioAbstracao.Listas" {
+    abstract class UsuarioDisponivelLista<T> {
+        - listaUsuarios: List<T>
+        - tamanhoLista: int
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+        {abstract} + adicionarUsuario(usuario: T): void
+        {abstract} + removerUsuario(usuario: T): void
+    }
+    abstract class UsuariosNaoDisponivelLista<T> {
+        - listaUsuarios: List<T>
+        - tamanhoLista: int
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+        {abstract} + adicionarUsuario(usuario: T): void
+        {abstract} + removerUsuario(usuario: T): void
+    }
+    interface UsuarioListaModelInterface<T> {
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+    }
+    class UsuarioListaModel<T> {
+        - listaProgramadores: List<T>
+        - tamanhoLista: int
+        + getListaUsuarios(): List<T>
+        + setListaUsuarios(listaUsuarios: List<T>): void
+        + getTamanhoLista(): int
+        + setTamanhoLista(tamanho: int): void
+    }
+}
+package "AnalistaSistema.Listas" {
+    class ControllerAnalistasSistemasDisponiveis {
+        - instance: ControllerAnalistasSistemasDisponiveis
+        - lista: AnalistasSistemasDisponivel
+        + getInstance(): ControllerAnalistasSistemasDisponiveis
+        + adicionarUsuario(usuario: AnalistaSistemasModel): void
+        + removerUsuario(usuario: AnalistaSistemasModel): void
+        + getUsuarioPorNome(nome: String): AnalistaSistemasModel
+        + getListaUsuarios(): List<AnalistaSistemasModel>
+        + listarAnalistasSistemasDisponiveis(): void
+    }
+    class ControllerAnalistaSistemaEmProjeto {
+        - instance: ControllerAnalistaSistemaEmProjeto
+        - lista: AnalistasSistemasEmProjeto
+        + getInstance(): ControllerAnalistaSistemaEmProjeto
+        + adicionarUsuario(usuario: AnalistaSistemasModel): void
+        + removerUsuario(usuario: AnalistaSistemasModel): void
+        + getUsuarioPorNome(nome: String): AnalistaSistemasModel
+        + getListaUsuarios(): List<AnalistaSistemasModel>
+        + listarAnalistaSistemasEmProjeto(): void
+    }
+    class AnalistasSistemasDisponivel {
+        - instance: AnalistasSistemasDisponivel
+        - listaAnalistas: List<AnalistaSistemasModel>
+        + getInstance(listaAnalistas: List<AnalistaSistemasModel>): AnalistasSistemasDisponivel
+    }
+    class AnalistasSistemasEmProjeto {
+        - instance: AnalistasSistemasEmProjeto
+        - listaAnalistas: List<AnalistaSistemasModel>
+        + getInstance(listaAnalistas: List<AnalistaSistemasModel>): AnalistasSistemasEmProjeto
+    }
+}
+
+ControllerAnalistasSistemasDisponiveis --|> UsuarioDisponivelLista
+ControllerAnalistaSistemaEmProjeto --|> UsuariosNaoDisponivelLista
+
+ControllerAnalistasSistemasDisponiveis o-- AnalistasSistemasDisponivel
+ControllerAnalistaSistemaEmProjeto o-- AnalistasSistemasEmProjeto
+
+UsuarioDisponivelLista --|> UsuarioListaModelInterface
+UsuariosNaoDisponivelLista --|> UsuarioListaModelInterface
+
+UsuarioListaModel --|> UsuarioListaModelInterface
+ControllerAnalistasSistemasDisponiveis --|> UsuarioListaModel
+ControllerAnalistaSistemaEmProjeto --|> UsuarioListaModel
+@enduml
