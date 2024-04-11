@@ -1,7 +1,7 @@
 package src.View;
 import java.util.Scanner;
 
-import src.Controller.*;
+import src.UsuarioAbstracao.UsuarioController;
 
 public class UsuarioFronteira {
     private UsuarioController usuarioController;
