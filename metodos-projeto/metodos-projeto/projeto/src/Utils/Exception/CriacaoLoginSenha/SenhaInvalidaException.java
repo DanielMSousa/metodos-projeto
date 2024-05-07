@@ -1,4 +1,4 @@
-package src.Utils.Exception.CriacaoLoginSenha;
+package Utils.Exception.CriacaoLoginSenha;
 
 public class SenhaInvalidaException extends Exception {
     public SenhaInvalidaException(String message){

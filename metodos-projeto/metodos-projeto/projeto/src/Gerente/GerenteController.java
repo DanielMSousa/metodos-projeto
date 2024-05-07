@@ -1,24 +1,29 @@
-package src.Gerente;
+package Gerente;
 
+import java.sql.Connection;
 import java.util.List;
 
-import src.UsuarioAbstracao.UsuarioAbstrato;
-import src.UsuarioAbstracao.UsuarioController;
-import src.Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
-import src.Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
-import src.Utils.Validacoes.UsuarioValidator;
+import UsuarioAbstracao.UsuarioAbstrato;
+import UsuarioAbstracao.UsuarioController;
+import Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
+import Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
+import Utils.Validacoes.UsuarioValidator;
 
 public class GerenteController implements UsuarioController {
     private static GerenteController instance;
+    private Connection connection;
+
  
 
-    public synchronized static GerenteController getInstance(){
+    public synchronized static GerenteController getInstance(Connection connection){
         if(instance == null){
-            instance = new GerenteController();
+            instance = new GerenteController(connection);
         }
         return instance;
     } 
-    private GerenteController(){}
+    private GerenteController(Connection connection){
+        this.connection = connection;
+    }
     @Override
     public GerenteModel criarNovoUsuario(String nome,String login, String senha){
         GerenteModel novoUsuario = new GerenteModel(nome);

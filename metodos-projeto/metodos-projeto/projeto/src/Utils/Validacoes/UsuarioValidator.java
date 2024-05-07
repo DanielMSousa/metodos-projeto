@@ -1,12 +1,12 @@
-package src.Utils.Validacoes;
+package Utils.Validacoes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import src.Utils.TipoUsuarios;
-import src.Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
-import src.Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
-import src.Utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
+import Utils.TipoUsuarios;
+import Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
+import Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
+import Utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 
 public class UsuarioValidator {
 

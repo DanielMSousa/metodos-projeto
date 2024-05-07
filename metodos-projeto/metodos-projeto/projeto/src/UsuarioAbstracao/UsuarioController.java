@@ -1,8 +1,7 @@
-package src.UsuarioAbstracao;
+package UsuarioAbstracao;
 
 import java.util.List;
 
-import src.Programador.ProgramadorModel;
 
 public interface UsuarioController {
     UsuarioAbstrato criarNovoUsuario(String nome, String login, String senha);

@@ -1,10 +1,10 @@
-package src.Equipe;
+package Equipe;
 
 import java.util.List;
 
-import src.AnalistaSistemas.AnalistaSistemasModel;
-import src.Gerente.GerenteModel;
-import src.Programador.ProgramadorModel;
+import AnalistaSistemas.AnalistaSistemasModel;
+import Gerente.GerenteModel;
+import Programador.ProgramadorModel;
 
 public class EquipeModel {
     private GerenteModel gerente;

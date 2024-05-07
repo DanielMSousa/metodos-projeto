@@ -1,24 +1,28 @@
-package src.Programador;
+package Programador;
 
+import java.sql.Connection;
 import java.util.List;
 
-import src.UsuarioAbstracao.UsuarioAbstrato;
-import src.UsuarioAbstracao.UsuarioController;
-import src.Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
-import src.Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
-import src.Utils.Validacoes.UsuarioValidator;
+import UsuarioAbstracao.UsuarioAbstrato;
+import UsuarioAbstracao.UsuarioController;
+import Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
+import Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
+import Utils.Validacoes.UsuarioValidator;
 
 public class ProgramadorController implements UsuarioController  {
     private static ProgramadorController instance;
+    private Connection connection;
 
-    public synchronized static ProgramadorController getInstance(){
+
+    public synchronized static ProgramadorController getInstance(Connection connection){
         if(instance == null){
-            instance = new ProgramadorController();
+            instance = new ProgramadorController(connection);
         }
         return instance;
     }
 
-    private ProgramadorController(){
+    private ProgramadorController(Connection connection){
+        this.connection = connection;
     }
 
     public ProgramadorModel criarNovoUsuario(String nome,String login, String senha){

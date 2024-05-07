@@ -1,15 +1,17 @@
-package src.Facade;
+package Facade;
 
-import src.AnalistaSistemas.AnalistaSistemasController;
-import src.Equipe.EquipeController;
-import src.Gerente.GerenteController;
-import src.Programador.ProgramadorController;
-import src.UsuarioAbstracao.UsuarioAbstrato;
-import src.UsuarioAbstracao.UsuarioController;
-import src.Utils.TipoUsuarios;
-import src.Utils.Validacoes.UsuarioValidator;
-import src.Utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
+import AnalistaSistemas.AnalistaSistemasController;
+import Equipe.EquipeController;
+import Gerente.GerenteController;
+import Programador.ProgramadorController;
+import Service.getConnection;
+import UsuarioAbstracao.UsuarioAbstrato;
+import UsuarioAbstracao.UsuarioController;
+import Utils.TipoUsuarios;
+import Utils.Validacoes.UsuarioValidator;
+import Utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,17 +19,19 @@ public class UserEquipeFacade {
     private static UserEquipeFacade instance;
     private final Map<TipoUsuarios, UsuarioController> controladores = new HashMap<>();
     private EquipeController equipeController;
+    private Connection connection;
     
-    private UserEquipeFacade() {
-        controladores.put(TipoUsuarios.ANALISTA_DE_SISTEMAS, AnalistaSistemasController.getInstance());
-        controladores.put(TipoUsuarios.GERENTE, GerenteController.getInstance());
-        controladores.put(TipoUsuarios.PROGRAMADOR, ProgramadorController.getInstance());
-        equipeController = EquipeController.getInstance();
+    private UserEquipeFacade(String serverName,String dataBaseName,String username, String password) {
+        this.connection = getConnection.getConexaoSQL(serverName, dataBaseName, username, password);
+        controladores.put(TipoUsuarios.ANALISTA_DE_SISTEMAS, AnalistaSistemasController.getInstance(connection));
+        controladores.put(TipoUsuarios.GERENTE, GerenteController.getInstance(connection));
+        controladores.put(TipoUsuarios.PROGRAMADOR, ProgramadorController.getInstance(connection));
+        equipeController = EquipeController.getInstance(connection);
     }
 
-    public synchronized static UserEquipeFacade getInstance() {
+    public synchronized static UserEquipeFacade getInstance(Connection connection,String serverName,String dataBaseName,String username, String password) {
         if (instance == null) {
-            instance = new UserEquipeFacade();
+            instance = new UserEquipeFacade(serverName,dataBaseName,username,password);
         }
         return instance;
     }

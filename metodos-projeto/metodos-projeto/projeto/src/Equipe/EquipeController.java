@@ -1,19 +1,23 @@
-package src.Equipe;
+package Equipe;
 
+import java.sql.Connection;
 import java.util.List;
 
-import src.AnalistaSistemas.AnalistaSistemasModel;
-import src.Gerente.GerenteModel;
-import src.Programador.ProgramadorModel;
+import AnalistaSistemas.AnalistaSistemasModel;
+import Gerente.GerenteModel;
+import Programador.ProgramadorModel;
 
 public class EquipeController {
     private static EquipeController instance;
+    private Connection connection;
 
-    private EquipeController(){
+
+    private EquipeController(Connection connection){
+        this.connection = connection;
     }
-    public synchronized static  EquipeController getInstance() {
+    public synchronized static  EquipeController getInstance(Connection connection) {
         if(instance == null){
-            instance = new EquipeController();
+            instance = new EquipeController(connection);
         }
         return instance;
     }
