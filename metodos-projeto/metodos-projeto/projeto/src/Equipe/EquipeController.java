@@ -8,10 +8,8 @@ import src.Programador.ProgramadorModel;
 
 public class EquipeController {
     private static EquipeController instance;
-    private static EquipeLista equipeLista;
 
     private EquipeController(){
-        equipeLista =EquipeLista.getInstance();
     }
     public synchronized static  EquipeController getInstance() {
         if(instance == null){
@@ -23,12 +21,11 @@ public class EquipeController {
     // Método para criar uma nova equipe
     public EquipeModel criarEquipe(GerenteModel gerente, List<ProgramadorModel> listaProgramador, AnalistaSistemasModel analistaSistemas) {
         EquipeModel equipe = new EquipeModel(gerente, listaProgramador, analistaSistemas);
-        equipeLista.adicionarEquipe(equipe);
         return equipe;
     }
 
-    public List<EquipeModel> obterEquipes(){
-        return equipeLista.getListaEquipes();
-    }
+    // public List<EquipeModel> obterEquipes(){
+    //     //todo
+    // }
 
 }

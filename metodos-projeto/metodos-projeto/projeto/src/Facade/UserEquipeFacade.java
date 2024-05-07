@@ -2,7 +2,6 @@ package src.Facade;
 
 import src.AnalistaSistemas.AnalistaSistemasController;
 import src.Equipe.EquipeController;
-import src.Equipe.EquipeModel;
 import src.Gerente.GerenteController;
 import src.Programador.ProgramadorController;
 import src.UsuarioAbstracao.UsuarioAbstrato;

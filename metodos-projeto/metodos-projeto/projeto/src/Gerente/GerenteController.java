@@ -2,8 +2,7 @@ package src.Gerente;
 
 import java.util.List;
 
-import src.Gerente.Listas.ControllerGerenteEmProjeto;
-import src.Gerente.Listas.ControllerGerentesDisponiveis;
+import src.UsuarioAbstracao.UsuarioAbstrato;
 import src.UsuarioAbstracao.UsuarioController;
 import src.Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
 import src.Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
@@ -11,8 +10,7 @@ import src.Utils.Validacoes.UsuarioValidator;
 
 public class GerenteController implements UsuarioController {
     private static GerenteController instance;
-    private static ControllerGerentesDisponiveis controllerGerentesDisponiveis;
-    private static ControllerGerenteEmProjeto controllerGerenteEmProjeto;
+ 
 
     public synchronized static GerenteController getInstance(){
         if(instance == null){
@@ -20,10 +18,7 @@ public class GerenteController implements UsuarioController {
         }
         return instance;
     } 
-    private GerenteController(){
-        controllerGerentesDisponiveis = ControllerGerentesDisponiveis.getInstance();
-        controllerGerenteEmProjeto = ControllerGerenteEmProjeto.getInstance();
-    }
+    private GerenteController(){}
     @Override
     public GerenteModel criarNovoUsuario(String nome,String login, String senha){
         GerenteModel novoUsuario = new GerenteModel(nome);
@@ -42,27 +37,33 @@ public class GerenteController implements UsuarioController {
                 System.err.println("Erro ao criar senha: "+ e.getMessage());
             }
     }   
-        controllerGerentesDisponiveis.adicionarUsuario(novoUsuario);
         return novoUsuario;
     }
 
-    public void alterarDiponibilidade(GerenteModel usuario){
+    @Override
+    public void alterarDiponibilidade(UsuarioAbstrato usuario){
         if(usuario.getDisponivel()){
             usuario.setDisponivel(false);
-            controllerGerentesDisponiveis.removerUsuario(usuario);
-            controllerGerenteEmProjeto.adicionarUsuario(usuario);
+            
         }else{
             usuario.setDisponivel(true);
-            controllerGerenteEmProjeto.removerUsuario(usuario);
-            controllerGerentesDisponiveis.adicionarUsuario(usuario);
+           
         }
     }
-    public List<GerenteModel> obterGerentes(){
+    @Override
+    public void deletarUsuario(String login) {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public GerenteModel updateUsuario(String login) {
+        // TODO Auto-generated method stub
         return null;
     }
 
-    public GerenteModel recuperarGerente(){
-        obterGerentes();
+    @Override
+    public List<GerenteModel> getUsuarios() {
+        // TODO Auto-generated method stub
         return null;
     }
 }

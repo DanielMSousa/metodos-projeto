@@ -1,0 +1,60 @@
+@startuml
+
+!define ENTITY_COLOR #808080
+!define BOUNDARY_COLOR #808080
+!define MODEL_COLOR #808080
+!define SINGLETON_COLOR #008000
+!define FACADE_COLOR #0000FF
+!define LOGGER_COLOR #FFA500
+
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+class UsuarioAbstrato << (M,ENTITY_COLOR) >>
+class GerenteModel << (M,ENTITY_COLOR) >>
+class ProgramadorModel << (M,ENTITY_COLOR) >>
+class AnalistaSistemasModel << (M,ENTITY_COLOR) >>
+class EquipeModel << (M,ENTITY_COLOR) >>
+class UsuarioService << (B,BOUNDARY_COLOR) >>
+class UserEquipeFacade << (B,FACADE_COLOR) >>
+class EquipeController << (C,SINGLETON_COLOR) >>
+class GerenteController << (C,SINGLETON_COLOR) >>
+class ProgramadorController << (C,SINGLETON_COLOR) >>
+class AnalistaSistemasController << (C,SINGLETON_COLOR) >>
+class TerminalLogger << (M,LOGGER_COLOR) >>
+class FileLogger << (M,LOGGER_COLOR) >>
+class DatabaseLogger << (M,LOGGER_COLOR) >>
+
+legend
+    Singleton: Verde
+    Facade: Azul
+    Adapter: Laranja
+end legend
+
+GerenteModel --|> UsuarioAbstrato
+ProgramadorModel --|> UsuarioAbstrato
+AnalistaSistemasModel --|>UsuarioAbstrato
+
+
+UsuarioService  --> UserEquipeFacade
+UserEquipeFacade  -->  EquipeController
+
+EquipeController "1" -- "1..*" EquipeModel
+ProgramadorController "1" -- "1..*" ProgramadorModel
+GerenteController "1" -- "1..*" GerenteModel
+AnalistaSistemasController "1" -- "1..*" AnalistaSistemasModel
+
+
+
+UserEquipeFacade -->  ProgramadorController
+UserEquipeFacade -->  AnalistaSistemasController
+UserEquipeFacade -->  GerenteController
+
+UsuarioService  -->  TerminalLogger
+UsuarioService  -->  FileLogger
+UsuarioService  -->  DatabaseLogger
+
+@enduml

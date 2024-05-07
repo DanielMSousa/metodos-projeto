@@ -1,7 +1,9 @@
 package src.AnalistaSistemas;
 
-import src.AnalistaSistemas.Listas.ControllerAnalistaSistemasDisponivel;
-import src.AnalistaSistemas.Listas.ControllerAnalistaSistemasEmProjeto;
+
+import java.util.List;
+
+import src.UsuarioAbstracao.UsuarioAbstrato;
 import src.UsuarioAbstracao.UsuarioController;
 import src.Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
 import src.Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
@@ -10,12 +12,7 @@ import src.Utils.Validacoes.UsuarioValidator;
 public class AnalistaSistemasController implements UsuarioController{
 
     private static AnalistaSistemasController instance;
-    private static ControllerAnalistaSistemasDisponivel controllerAnalistaSistemasDisponivel;
-    private static ControllerAnalistaSistemasEmProjeto controllerAnalistaSistemasEmProjeto;
-    private AnalistaSistemasController(){
-        controllerAnalistaSistemasDisponivel = ControllerAnalistaSistemasDisponivel.getInstance();
-        controllerAnalistaSistemasEmProjeto = ControllerAnalistaSistemasEmProjeto.getInstance();
-    }
+    private AnalistaSistemasController(){}
 
 
     public synchronized static AnalistaSistemasController getInstance(){
@@ -45,16 +42,32 @@ public class AnalistaSistemasController implements UsuarioController{
         }
         return novoUsuario;
     }
-
-    public void alterarDiponibilidade(AnalistaSistemasModel usuario){
+    @Override
+    public void alterarDiponibilidade(UsuarioAbstrato usuario){
         if(usuario.getDisponivel()){
             usuario.setDisponivel(false);
-            controllerAnalistaSistemasDisponivel.removerUsuario(usuario);
-            controllerAnalistaSistemasEmProjeto.adicionarUsuario(usuario);
+            
         }else{
             usuario.setDisponivel(true);
-            controllerAnalistaSistemasEmProjeto.removerUsuario(usuario);
-            controllerAnalistaSistemasDisponivel.adicionarUsuario(usuario);
+           
         }
+    }
+
+    @Override
+    public void deletarUsuario(String login) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public AnalistaSistemasModel updateUsuario(String login) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<AnalistaSistemasModel> getUsuarios() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

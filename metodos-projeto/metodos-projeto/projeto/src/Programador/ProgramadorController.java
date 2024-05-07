@@ -2,8 +2,7 @@ package src.Programador;
 
 import java.util.List;
 
-import src.Programador.Listas.ControllerProgramadoresDisponiveis;
-import src.Programador.Listas.ControllerProgramadoresEmProjeto;
+import src.UsuarioAbstracao.UsuarioAbstrato;
 import src.UsuarioAbstracao.UsuarioController;
 import src.Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
 import src.Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
@@ -11,8 +10,6 @@ import src.Utils.Validacoes.UsuarioValidator;
 
 public class ProgramadorController implements UsuarioController  {
     private static ProgramadorController instance;
-    private static ControllerProgramadoresDisponiveis listaProgramadoresDisponiveisController;
-    private static ControllerProgramadoresEmProjeto listaProgramadoresEmProjetoController;
 
     public synchronized static ProgramadorController getInstance(){
         if(instance == null){
@@ -22,8 +19,6 @@ public class ProgramadorController implements UsuarioController  {
     }
 
     private ProgramadorController(){
-        listaProgramadoresDisponiveisController = ControllerProgramadoresDisponiveis.getInstance();
-        listaProgramadoresEmProjetoController = ControllerProgramadoresEmProjeto.getInstance();
     }
 
     public ProgramadorModel criarNovoUsuario(String nome,String login, String senha){
@@ -45,31 +40,37 @@ public class ProgramadorController implements UsuarioController  {
                 }
         }
 
-        listaProgramadoresDisponiveisController.adicionarUsuario(novoUsuario);
 
 
         return novoUsuario;
     }
-
-    public void alterarDiponibilidade(ProgramadorModel usuario){
+    @Override
+    public void alterarDiponibilidade(UsuarioAbstrato usuario){
         if(usuario.getDisponivel()){
             usuario.setDisponivel(false);
-            listaProgramadoresDisponiveisController.removerUsuario(usuario);
-            listaProgramadoresEmProjetoController.adicionarUsuario(usuario);
+            
         }else{
             usuario.setDisponivel(true);
-            listaProgramadoresEmProjetoController.removerUsuario(usuario);
-            listaProgramadoresDisponiveisController.adicionarUsuario(usuario);
+           
         }
     }
+    
 
-    public void removerUsuario(ProgramadorModel usuario) {
-        listaProgramadoresDisponiveisController.removerUsuario(usuario);
+    @Override
+    public void deletarUsuario(String login) {
+        // TODO Auto-generated method stub
     }
 
+    @Override
+    public UsuarioAbstrato updateUsuario(String login) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-    public List<ProgramadorModel> obterProgramadoresDisponiveis(){
-        return listaProgramadoresDisponiveisController.getListaUsuarios();
+    @Override
+    public List<ProgramadorModel> getUsuarios() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
