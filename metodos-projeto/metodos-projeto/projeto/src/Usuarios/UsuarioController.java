@@ -1,32 +1,32 @@
 package Usuarios;
 
 import Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
+import Utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 import Utils.Validacoes.UsuarioValidator;
+import factory.OperadorSistemaFactory;
 import factory.ServicePersistenceFactory;
-import factory.UsuarioFactory;
+import userInterface.OperadorSistema;
 import Service.ServicePersistence;
 import Utils.Exception.CriacaoLoginSenha.LoginExisteException;
 import Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
 public class UsuarioController{
     private final String type ;
-    private final String loginUsuario ;
-    private final String password ;
+    
     private static UsuarioController instance;
 
-    private UsuarioController(String bdType,String login,String password){
+    private UsuarioController(String bdType){
         this.type = bdType;
-        this.loginUsuario = login;
-        this.password = password;
+        
     }
 
-    public static synchronized UsuarioController getInstance(String bdType,String login, String password){
+    public static synchronized UsuarioController getInstance(String bdType){
         if(instance == null){
-            instance = new UsuarioController(bdType, login, password);
+            instance = new UsuarioController(bdType);
         }
         return instance;
     }
 
-    public void criarNovoUsuario(String nome, String login, String senha) throws LoginExisteException,LoginInvalidoException,SenhaInvalidaException {
+    public void criarNovoUsuario(String nome, String login, String senha) throws LoginExisteException,LoginInvalidoException,SenhaInvalidaException,TipoUsuarioInvalidoException {
         
         try{
             UsuarioValidator.validarFormatoLogin(login);
@@ -39,33 +39,35 @@ public class UsuarioController{
         }catch(SenhaInvalidaException e){
             throw new SenhaInvalidaException("Formato de senha inválida" + e);
         }
-
-        Usuario novoUsuario = UsuarioFactory.criarUsuario(nome, login, senha);
-        
-        try {
-            ServicePersistence servicePersistence = ServicePersistenceFactory.criarServicePersistence(type, loginUsuario, password);
-            servicePersistence.criarUsuario(novoUsuario);
+        try{
+        OperadorSistema novoUsuario = OperadorSistemaFactory.GetUsuario("criar",login,nome,senha);
+        ServicePersistence servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
+        servicePersistence.criarUsuario(novoUsuario);
         } catch (LoginExisteException e) {
-            throw new LoginExisteException("Login já existe: " + e.getMessage());
+                throw new LoginExisteException("Login já existe: " + e.getMessage());    
+        }catch( TipoUsuarioInvalidoException e){
+            throw new TipoUsuarioInvalidoException(e.getMessage());
         }
     }
 
-    public void deletarUsuario(String login) throws LoginExisteException {
+    public void deletarUsuario(String login) throws LoginExisteException, TipoUsuarioInvalidoException {
         try{
-            ServicePersistence servicePersistence = ServicePersistenceFactory.criarServicePersistence(type, loginUsuario, password);
+            ServicePersistence servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
             servicePersistence.excluirUsuario(login);
         }catch(LoginExisteException e){
             throw new LoginExisteException("Usuario nao encontrado " + e.getMessage());
+        }catch(TipoUsuarioInvalidoException e){
+            throw new TipoUsuarioInvalidoException(e.getMessage());
         }
     }
 
-    public Usuario updateUsuario(String login, String novoNome, String novaSenha) {
+    public OperadorSistema updateUsuario(String login, String novoNome, String novaSenha) {
         try {
             // Cria uma instância do serviço de persistência
-            ServicePersistence servicePersistence = ServicePersistenceFactory.criarServicePersistence(type, loginUsuario, password);
+            ServicePersistence servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
             
             // Busca o usuário com base no login
-            Usuario usuario = servicePersistence.buscarUsuarioPorLogin(login);
+            OperadorSistema usuario = servicePersistence.buscarUsuarioPorLogin(login);
             
             // Verifica se o usuário foi encontrado
             if (usuario != null) {
@@ -95,7 +97,7 @@ public class UsuarioController{
 
     public String getUsuarios() {
         // Supondo que você tenha uma instância de ServicePersistence já configurada com o tipo, login e senha
-        ServicePersistence servicePersistence = ServicePersistenceFactory.criarServicePersistence(type, loginUsuario, password);
+        ServicePersistence servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
         
         // Chama o método getUsuariosProjeto() sem especificar um projeto específico
         String usuariosProjetoJSON = servicePersistence.getUsuarios();

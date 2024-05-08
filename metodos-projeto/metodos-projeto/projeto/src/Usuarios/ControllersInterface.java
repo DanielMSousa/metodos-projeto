@@ -4,9 +4,9 @@ import java.util.List;
 
 
 public interface ControllersInterface {
-    UsuarioAbstrato criarNovoUsuario(String nome, String login, String senha);
+    Usuario criarNovoUsuario(String nome, String login, String senha);
     void deletarUsuario(String login);
-    UsuarioAbstrato updateUsuario(String login);
-    List<? extends UsuarioAbstrato> getUsuarios() ;
-    void alterarDiponibilidade(UsuarioAbstrato usuario);
+    Usuario updateUsuario(String login);
+    List<? extends Usuario> getUsuarios() ;
+    void alterarDiponibilidade(Usuario usuario);
 }

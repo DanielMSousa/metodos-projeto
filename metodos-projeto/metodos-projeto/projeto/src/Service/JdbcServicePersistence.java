@@ -9,6 +9,9 @@ import java.sql.SQLException;
 
 import Usuarios.Usuario;
 import Utils.Exception.CriacaoLoginSenha.LoginExisteException;
+import Utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
+import factory.OperadorSistemaFactory;
+import userInterface.OperadorSistema;
 
 public class JdbcServicePersistence implements ServicePersistence {
     private  final static String URL = "jdbc:mysql://localhost/Trellotion";
@@ -21,35 +24,36 @@ public class JdbcServicePersistence implements ServicePersistence {
     }
 
     @Override
-    public Usuario buscarUsuarioPorLogin(String login) {
+    public OperadorSistema buscarUsuarioPorLogin(String login) throws TipoUsuarioInvalidoException {
         String sql = "SELECT * FROM usuarios WHERE login = ?";
         
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, login);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     // Se o usuário for encontrado, crie um objeto Usuario com os dados do ResultSet e retorne
-                    Usuario usuario = new Usuario(rs.getString("nome"));
-                    usuario.setLogin(rs.getString("login"));
-                    usuario.setSenha(rs.getString("senha"));
-                    // Configure outros atributos conforme necessário
-                    return usuario;
+                    String nome = rs.getString("nome");
+                    String senha = rs.getString("senha");
+                    return OperadorSistemaFactory.GetUsuario("criar", login, nome, senha);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
         }
-        
+
         return null; // Retorna null se o usuário não for encontrado ou se ocorrer algum erro
     }
     
 
     @Override
-    public void criarUsuario(Usuario usuario) throws LoginExisteException {
-
+    public void criarUsuario(OperadorSistema usuario) throws LoginExisteException, TipoUsuarioInvalidoException {
+        try{
         if (buscarUsuarioPorLogin(usuario.getLogin()) != null) {
             throw new LoginExisteException("Login já existe");
+        }}catch(TipoUsuarioInvalidoException e){
+            throw new TipoUsuarioInvalidoException(e.getMessage());
         }
 
         String sql = "INSERT INTO usuarios (login, nome, senha) VALUES (?,?,?)";
@@ -66,7 +70,8 @@ public class JdbcServicePersistence implements ServicePersistence {
     }
 
     @Override
-    public void atualizarUsuario(Usuario usuario) {
+    public void atualizarUsuario(OperadorSistema usuario) {
+        if(usuario instanceof Usuario){
         String sql = "UPDATE usuarios SET nome = ?, senha = ? WHERE login = ?";
         
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -80,12 +85,17 @@ public class JdbcServicePersistence implements ServicePersistence {
             // Lidar com exceções de SQL, se necessário
         }
     }
+    }
 
     @Override
-    public void excluirUsuario(String login) throws LoginExisteException {
-        if(buscarUsuarioPorLogin(login) == null){
-            throw new LoginExisteException("Usuário não encontrado");
-        }
+    public void excluirUsuario(String login) throws LoginExisteException, TipoUsuarioInvalidoException {
+
+        try{
+            if (buscarUsuarioPorLogin(login) == null) {
+                throw new LoginExisteException("Usuario nao encontrado");
+            }}catch(TipoUsuarioInvalidoException e){
+                throw new TipoUsuarioInvalidoException(e.getMessage());
+            }
 
         String sql = "DELETE INTO usuarios WHERE login = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);

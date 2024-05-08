@@ -1,15 +1,16 @@
 package Service;
 
-import java.util.List;
 
 import Usuarios.Usuario;
 import Utils.Exception.CriacaoLoginSenha.LoginExisteException;
+import Utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
+import userInterface.OperadorSistema;
 
 public interface ServicePersistence {
-    void criarUsuario(Usuario usuario) throws LoginExisteException;
-    void atualizarUsuario(Usuario usuario);
-    void excluirUsuario(String login) throws LoginExisteException;
-    Usuario buscarUsuarioPorLogin(String Login);
+    void criarUsuario(OperadorSistema novoUsuario) throws LoginExisteException, TipoUsuarioInvalidoException;
+    void atualizarUsuario(OperadorSistema usuario);
+    void excluirUsuario(String login) throws LoginExisteException,TipoUsuarioInvalidoException;
+    OperadorSistema buscarUsuarioPorLogin(String Login) throws TipoUsuarioInvalidoException;
     void criarProjeto(String nomeProjeto);
     String getUsuariosProjeto(int idProjeto);
     void removerUsuarioProjeto(Usuario usuario, int idProjeto);
