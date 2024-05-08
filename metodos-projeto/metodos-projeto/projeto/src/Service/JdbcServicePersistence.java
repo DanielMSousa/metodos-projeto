@@ -234,10 +234,31 @@ public class JdbcServicePersistence implements ServicePersistence {
     
         return jsonBuilder.toString();
     }
-    
+
     @Override
-    public void atribuirTarefa(Usuario usuario, int idTarefa) {
-        // TODO Auto-generated method stub
-        
+    public void removerProjeto(int idProjeto) {
+    String sql = "DELETE FROM projeto WHERE id = ?";
+    try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, idProjeto);
+        stmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+        // Lidar com exceções de SQL, se necessário
+    }
+    }
+
+    @Override
+    public void alterarNomeProjeto(int idProjeto, String novoNome) {
+        String sql = "UPDATE projeto SET nome = ? WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, novoNome);
+            stmt.setInt(2, idProjeto);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
     }
 }

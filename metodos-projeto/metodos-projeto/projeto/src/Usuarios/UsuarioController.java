@@ -1,7 +1,5 @@
 package Usuarios;
-import java.util.List;
 
-import Usuarios.Usuario;
 import Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
 import Utils.Validacoes.UsuarioValidator;
 import factory.ServicePersistenceFactory;
@@ -61,7 +59,6 @@ public class UsuarioController{
         }
     }
 
-
     public Usuario updateUsuario(String login, String novoNome, String novaSenha) {
         try {
             // Cria uma instância do serviço de persistência
@@ -104,11 +101,6 @@ public class UsuarioController{
         String usuariosProjetoJSON = servicePersistence.getUsuarios();
         
         return usuariosProjetoJSON;
-    }
-
-    public void alterarDiponibilidade(UsuarioAbstrato usuario) {
-        // TODO Auto-generated method stub
-        
     }
 
     

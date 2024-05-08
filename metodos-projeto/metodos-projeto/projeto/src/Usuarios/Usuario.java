@@ -12,11 +12,9 @@ public class Usuario{
     private String login;
     private String nome;
     private String senha;
-    private Map<String,Funcao> funcoesPorProjeto;
 
     public Usuario(String nome){
         this.nome = nome;
-        this.funcoesPorProjeto = new HashMap<>();
     }
 
     public String getLogin(){
