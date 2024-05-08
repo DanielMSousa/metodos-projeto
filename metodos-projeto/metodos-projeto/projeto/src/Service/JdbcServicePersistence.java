@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import Usuarios.Usuario;
 import Utils.Exception.CriacaoLoginSenha.LoginExisteException;
@@ -99,26 +101,104 @@ public class JdbcServicePersistence implements ServicePersistence {
     }
 
     @Override
-    public void criarProjeto(Usuario usuario, String nomeProjeto) {
-        // TODO Auto-generated method stub
+    public void criarProjeto(String nomeProjeto) {
+        String sql = "INSERT INTO projeto (nome) VALUE(?) ";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nomeProjeto);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }  
         
     }
 
     @Override
-    public Usuario getUsuariosProjeto(int idProjeto) {
-        // TODO Auto-generated method stub
-        return null;
+    public String getUsuariosProjeto(int idProjeto) {
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{");
+        jsonBuilder.append("\"projetoId\": ").append(idProjeto).append(",");
+        jsonBuilder.append("\"usuarios\": [");
+    
+        String sql = "SELECT u.login, u.nome, up.funcao " +
+                     "FROM usuarios u " +
+                     "JOIN usuarioProjeto up ON u.login = up.usuario " +
+                     "WHERE up.projeto = ?";
+    
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProjeto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                boolean first = true;
+                while (rs.next()) {
+                    if (!first) {
+                        jsonBuilder.append(",");
+                    } else {
+                        first = false;
+                    }
+                    jsonBuilder.append("{");
+                    jsonBuilder.append("\"login\": \"").append(rs.getString("login")).append("\",");
+                    jsonBuilder.append("\"nome\": \"").append(rs.getString("nome")).append("\",");
+                    jsonBuilder.append("\"funcao\": \"").append(rs.getString("funcao")).append("\"");
+                    jsonBuilder.append("}");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+            return null;
+        }
+    
+        jsonBuilder.append("]");
+        jsonBuilder.append("}");
+    
+        return jsonBuilder.toString();
     }
 
     @Override
     public void removerUsuarioProjeto(Usuario usuario, int idProjeto) {
-        // TODO Auto-generated method stub
+        String sql = "DELETE FROM usuarioProjeto WHERE usuario = ? AND projeto = ?";
         
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, usuario.getLogin());
+            stmt.setInt(2, idProjeto);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
     }
-
     @Override
-    public void adionarUsuarioProjeto(Usuario usuario, int idProjeto, int idFuncao) {
-        // TODO Auto-generated method stub
+    public void adionarUsuarioProjeto(Usuario usuario, int idProjeto, String nomeFuncao) {
+    // Consulta SQL para obter o ID da função com base no nome fornecido
+    String sqlConsultaFuncao = "SELECT id FROM funcao WHERE nome = ?";
+
+    try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        PreparedStatement stmtConsultaFuncao = conn.prepareStatement(sqlConsultaFuncao)) {
+        stmtConsultaFuncao.setString(1, nomeFuncao);
+        try (ResultSet rs = stmtConsultaFuncao.executeQuery()) {
+            if (rs.next()) {
+                int idFuncao = rs.getInt("id");
+                
+                // Se a função for encontrada, execute a operação SQL para adicionar o usuário ao projeto
+                String sqlAdicionarUsuarioProjeto = "INSERT INTO usuarioProjeto (usuario, projeto, funcao) VALUES (?, ?, ?)";
+                try (PreparedStatement stmtAdicionarUsuarioProjeto = conn.prepareStatement(sqlAdicionarUsuarioProjeto)) {
+                    stmtAdicionarUsuarioProjeto.setString(1, usuario.getLogin());
+                    stmtAdicionarUsuarioProjeto.setInt(2, idProjeto);
+                    stmtAdicionarUsuarioProjeto.setInt(3, idFuncao);
+                    stmtAdicionarUsuarioProjeto.executeUpdate();
+                }
+            } else {
+                System.out.println("Função não encontrada: " + nomeFuncao);
+                // Lidar com a situação em que a função não é encontrada
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        // Lidar com exceções de SQL, se necessário
+    }
         
     }
 
