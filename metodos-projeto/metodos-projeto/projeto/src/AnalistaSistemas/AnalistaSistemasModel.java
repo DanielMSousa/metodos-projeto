@@ -1,5 +1,5 @@
 package AnalistaSistemas;
-import UsuarioAbstracao.UsuarioAbstrato;
+import Usuarios.UsuarioAbstrato;
 public class AnalistaSistemasModel extends UsuarioAbstrato {
     public AnalistaSistemasModel( String nome){
         super(nome,"AnalistaSistemas");

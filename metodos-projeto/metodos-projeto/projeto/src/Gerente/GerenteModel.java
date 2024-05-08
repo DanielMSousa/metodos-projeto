@@ -1,5 +1,5 @@
 package Gerente;
-import UsuarioAbstracao.UsuarioAbstrato;
+import Usuarios.UsuarioAbstrato;
 public class GerenteModel extends UsuarioAbstrato {
     public GerenteModel(String nome){
         super(nome,"Gerente");

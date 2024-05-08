@@ -5,8 +5,8 @@ import Equipe.EquipeController;
 import Gerente.GerenteController;
 import Programador.ProgramadorController;
 import Service.getConnection;
-import UsuarioAbstracao.UsuarioAbstrato;
-import UsuarioAbstracao.UsuarioController;
+import Usuarios.UsuarioAbstrato;
+import Usuarios.ControllersInterface;
 import Utils.TipoUsuarios;
 import Utils.Validacoes.UsuarioValidator;
 import Utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class UserEquipeFacade {
     private static UserEquipeFacade instance;
-    private final Map<TipoUsuarios, UsuarioController> controladores = new HashMap<>();
+    private final Map<TipoUsuarios, ControllersInterface> controladores = new HashMap<>();
     private EquipeController equipeController;
     private Connection connection;
     
@@ -47,7 +47,7 @@ public class UserEquipeFacade {
             return null;
         }
         
-        UsuarioController controller = controladores.get(tipo);
+        ControllersInterface controller = controladores.get(tipo);
         
         return controller.criarNovoUsuario(nome, login, senha);
     }

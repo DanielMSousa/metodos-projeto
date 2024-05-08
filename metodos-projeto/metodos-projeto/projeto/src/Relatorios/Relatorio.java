@@ -1,5 +1,6 @@
 package Relatorios;
 
+//classes abstratas e o metodos
 public class Relatorio {
     void iniciaRelatorio(){
 

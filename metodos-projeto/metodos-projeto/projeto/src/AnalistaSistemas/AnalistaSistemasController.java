@@ -4,13 +4,13 @@ package AnalistaSistemas;
 import java.sql.Connection;
 import java.util.List;
 
-import UsuarioAbstracao.UsuarioAbstrato;
-import UsuarioAbstracao.UsuarioController;
+import Usuarios.UsuarioAbstrato;
+import Usuarios.ControllersInterface;
 import Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
 import Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
 import Utils.Validacoes.UsuarioValidator;
 
-public class AnalistaSistemasController implements UsuarioController{
+public class AnalistaSistemasController implements ControllersInterface{
 
     private static AnalistaSistemasController instance;
     private Connection connection;

@@ -1,5 +1,5 @@
 package Programador;
-import UsuarioAbstracao.UsuarioAbstrato;
+import Usuarios.UsuarioAbstrato;
 
 public class ProgramadorModel extends UsuarioAbstrato{
     public ProgramadorModel(String nome){

@@ -1,4 +1,4 @@
-package src.UsuarioAbstracao;
+package Usuarios;
 
 public interface UsuarioInterface {
     String getNome();

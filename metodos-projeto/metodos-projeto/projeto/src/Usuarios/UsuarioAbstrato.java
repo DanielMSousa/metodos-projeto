@@ -1,5 +1,4 @@
-package src.UsuarioAbstracao;
-
+package Usuarios;
 public abstract class UsuarioAbstrato implements UsuarioInterface{
     
     private String nome;
@@ -19,8 +18,6 @@ public abstract class UsuarioAbstrato implements UsuarioInterface{
 
     }
 
-    
-   
     @Override
     public String getNome(){
         return this.nome;

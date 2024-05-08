@@ -4,13 +4,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import Utils.TipoUsuarios;
+import Utils.Exception.CriacaoLoginSenha.LoginExisteException;
 import Utils.Exception.CriacaoLoginSenha.LoginInvalidoException;
 import Utils.Exception.CriacaoLoginSenha.SenhaInvalidaException;
 import Utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 
 public class UsuarioValidator {
 
-    public static void validarLogin(String novoLogin) throws LoginInvalidoException{
+    public static void validarFormatoLogin(String novoLogin) throws LoginInvalidoException{
         String regex = "^(?=[a-zA-Z]{1,12}$)[a-zA-Z].*$";
         Pattern pattern;
         Matcher matcher;
@@ -19,6 +20,13 @@ public class UsuarioValidator {
         matcher = pattern.matcher(novoLogin);
         if(!matcher.matches()){
             throw new LoginInvalidoException("O login deve conter ao menos 1 caractere, com no máximo 12 e não pode conter números ou caracteres especiais");
+        }
+        
+    }
+    public static void validarLogin(String novoLogin) throws LoginInvalidoException,LoginExisteException{
+        try {validarFormatoLogin(novoLogin);}
+        catch(LoginInvalidoException e){
+            throw new LoginInvalidoException("Formato de Login inválido" + e);
         }
         
     }
