@@ -5,19 +5,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import Usuarios.Usuario;
 import Utils.Exception.CriacaoLoginSenha.LoginExisteException;
 
 public class JdbcServicePersistence implements ServicePersistence {
-    private  final String URL;
+    private  final static String URL = "jdbc:mysql://localhost/Trellotion";
     private  final String USER;
     private  final String PASSWORD;
 
-    public JdbcServicePersistence(String squemaName, String user, String password){
-        this.URL = "jdbc:mysql://localhost/"+squemaName;
+    public JdbcServicePersistence(String user, String password){
         this.USER = user;
         this.PASSWORD = password;
     }
@@ -202,6 +200,41 @@ public class JdbcServicePersistence implements ServicePersistence {
         
     }
 
+    @Override
+    public String getUsuarios() {
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("[");
+        
+        String sql = "SELECT * FROM usuarios";
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+    
+            boolean first = true;
+            while (rs.next()) {
+                if (!first) {
+                    jsonBuilder.append(",");
+                } else {
+                    first = false;
+                }
+                jsonBuilder.append("{");
+                jsonBuilder.append("\"login\": \"").append(rs.getString("login")).append("\",");
+                jsonBuilder.append("\"nome\": \"").append(rs.getString("nome")).append("\",");
+                jsonBuilder.append("\"senha\": \"").append(rs.getString("senha")).append("\"");
+                jsonBuilder.append("}");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+            return null;
+        }
+    
+        jsonBuilder.append("]");
+    
+        return jsonBuilder.toString();
+    }
+    
     @Override
     public void atribuirTarefa(Usuario usuario, int idTarefa) {
         // TODO Auto-generated method stub

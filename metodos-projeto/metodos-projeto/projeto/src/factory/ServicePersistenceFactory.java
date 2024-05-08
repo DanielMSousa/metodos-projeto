@@ -4,9 +4,9 @@ import Service.JdbcServicePersistence;
 import Service.ServicePersistence;
 
 public class ServicePersistenceFactory {
-    public static ServicePersistence criarServicePersistence(String tipo,String squemaName,String loginDb,String passwordDb) {
+    public static ServicePersistence criarServicePersistence(String tipo,String usuario,String senha) {
         if ("jdbc".equals(tipo)) {
-            return new JdbcServicePersistence(squemaName,loginDb,passwordDb);
+            return new JdbcServicePersistence(usuario,senha);
         } else {
             throw new IllegalArgumentException("Tipo de persistência desconhecido: " + tipo);
         }

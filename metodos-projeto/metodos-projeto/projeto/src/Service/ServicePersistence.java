@@ -15,6 +15,7 @@ public interface ServicePersistence {
     void removerUsuarioProjeto(Usuario usuario, int idProjeto);
     void adionarUsuarioProjeto(Usuario usuario,int idProjeto,String nomeFuncao);
     void atribuirTarefa(Usuario usuario, int idTarefa);
+    String getUsuarios();
     //Tem mais ainda
 }
 

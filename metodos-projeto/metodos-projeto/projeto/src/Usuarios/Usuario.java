@@ -30,7 +30,9 @@ public class Usuario{
     public String getNome(){
         return this.nome;
     }
-
+    public void setNome(String nome){
+        this.nome = nome;
+    }
     public void setLogin(String login){
         this.login = login;
     }
