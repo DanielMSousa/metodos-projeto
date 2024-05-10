@@ -1,15 +1,18 @@
 package domain;
 
 public class Kanban {
-    private int id; // integer pk
-    private int projeto; // integer (foreign key referencing projeto.id)
+    private int id = 0;
+    private int idProjeto; // integer (foreign key referencing idProjeto.id)
     private String nome; // string
-
+    
     // Constructor
-    public Kanban(int id, int projeto, String nome) {
-        this.id = id;
-        this.projeto = projeto;
+    private Kanban( int idProjeto, String nome) {
+        this.idProjeto = idProjeto;
         this.nome = nome;
+    }
+
+    public static Kanban createKanban(int idProjeto,String nome){
+        return new Kanban(idProjeto, nome);
     }
 
     public int getId() {
@@ -18,7 +21,11 @@ public class Kanban {
     public String getNome() {
         return nome;
     }
-    public int getProjeto() {
-        return projeto;
+    public int getidProjeto() {
+        return idProjeto;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

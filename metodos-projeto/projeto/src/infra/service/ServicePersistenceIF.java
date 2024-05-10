@@ -32,7 +32,7 @@ public interface ServicePersistenceIF {
     String getCartoesProjeto(int idProjeto);
     void updateStatusCartao(UsuarioProjeto gerente, int idCartao,UsuarioProjeto solicitante,String novoStatus);
     void removeCartao(UsuarioProjeto gerente,int idCartao);
-    void createKanban(int idProjeto,String nomeKanban);
+    void createKanban(Kanban kanban);
     void updateNomeKanban(int idKanban,String nome);
     
     // todos os metodos podem ter sua logica implementada na fachada

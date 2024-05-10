@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import domain.UserFactory;
-import domain.CartaoUsuario;
 import domain.Kanban;
 import domain.ProjectFactory;
 import domain.ProjetoIF;
@@ -420,7 +419,9 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
         }
     }
     @Override
-    public void createKanban(int idProjeto, String nomeKanban) {
+    public void createKanban(Kanban kanban) {
+        String nomeKanban = kanban.getNome();
+        int idProjeto = kanban.getidProjeto();
         String sql = "INSERT INTO kanban (nome, projeto) VALUES (?, ?)";
         
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
