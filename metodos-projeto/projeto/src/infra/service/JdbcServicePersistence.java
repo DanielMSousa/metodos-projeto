@@ -6,7 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 import domain.UserFactory;
+import domain.Cartao;
+import domain.CartaoUsuario;
 import domain.Kanban;
 import domain.ProjectFactory;
 import domain.ProjetoIF;
@@ -362,12 +365,12 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
         return jsonBuilder.toString();
     }
     @Override
-    public void addUsuarioCartao(int idCartao, UsuarioProjeto gerente, UsuarioProjeto atribuinte) {
+    public void addUsuarioCartao(Cartao idCartao, UsuarioProjeto atribuinte) {
         String sql = "INSERT INTO cartaoUsuario (cartao, usuario) VALUES (?, ?)";
         
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, idCartao);
+            stmt.setInt(1, idCartao.getId());
             stmt.setInt(2, atribuinte.getId()); // Suponha que você tenha um método getId() na classe UsuarioProjeto para obter o ID do usuário
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -487,6 +490,21 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
         jsonBuilder.append("]");
 
         return jsonBuilder.toString();
+    }
+
+    @Override
+    public void removeCartaoUsuario(UsuarioProjeto usuarioProjeto, CartaoUsuario cartaoUsuario) {
+        String sql = "DELETE FROM cartaoUsuario WHERE usuario = ? AND cartao = ?";
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, usuarioProjeto.getId()); // Supondo que você tenha um método getUsuario() na classe UsuarioProjeto para obter o usuário associado
+            stmt.setInt(2, cartaoUsuario.getId()); // Supondo que você tenha um método getId() na classe CartaoUsuario para obter o ID do cartão de usuário
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
     }
 
 }

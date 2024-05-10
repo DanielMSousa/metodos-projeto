@@ -26,7 +26,7 @@ public interface ServicePersistenceIF {
     ProjetoIF buscarProjetoPorId(int idProjeto);
     String getKanban(int idKanban);
     // tem que ter um kanban inexistente
-    void addUsuarioCartao(int idCartao,UsuarioProjeto gerente, UsuarioProjeto atribuinte);
+    void addUsuarioCartao(Cartao idCartao,UsuarioProjeto atribuinte);
     void createCartao(Kanban kanbanAssociado,String nome,String texto);
     String getCartoesUsuario(String loger);
     String getCartoesProjeto(int idProjeto);
@@ -34,6 +34,7 @@ public interface ServicePersistenceIF {
     void removeCartao(UsuarioProjeto gerente,int idCartao);
     void createKanban(Kanban kanban);
     void updateNomeKanban(int idKanban,String nome);
+    void removeCartaoUsuario(UsuarioProjeto id,CartaoUsuario idCartaoUsuario);
     
     // todos os metodos podem ter sua logica implementada na fachada
     //Tem mais ainda

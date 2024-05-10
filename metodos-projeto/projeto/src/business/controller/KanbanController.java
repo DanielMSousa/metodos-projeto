@@ -8,23 +8,16 @@ import infra.service.ServicePersistenceIF;
 public class KanbanController {
     private final String type ;
 
-    private static KanbanController instance;
-
-    private KanbanController(String bdType){
+    public KanbanController(String bdType){
         this.type = bdType;
     }
-
-    public KanbanController getInstance(String bdType){
-        if(instance == null){
-            instance = new KanbanController(bdType);
-        }
-        return instance;
-    }
     
-    // Método para adicionar um novo quadro Kanban
-    public void CreateKanban(int idProjeto, String nome) {
-        Kanban kanban = Kanban.createKanban(idProjeto, nome);
+    public Kanban getKanban(int idProjeto, String nome){
+        return Kanban.createKanban(idProjeto, nome);
+    }
 
+    // Método para adicionar um novo quadro Kanban
+    public void CreateKanban(Kanban kanban) {
         ServicePersistenceIF servicePersistenceIF = ServicePersistenceFactory.criarServicePersistence(type);
         servicePersistenceIF.createKanban(kanban);
     }
