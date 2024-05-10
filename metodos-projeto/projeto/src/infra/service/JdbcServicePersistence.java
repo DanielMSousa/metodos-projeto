@@ -5,9 +5,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 
 import domain.UserFactory;
+import domain.UserFactoryIF;
 import domain.Cartao;
 import domain.CartaoUsuario;
 import domain.Kanban;
@@ -116,17 +118,37 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
     }
 
     @Override
-    public void criarProjeto(String nomeProjeto) {
-        String sql = "INSERT INTO projeto (nome) VALUE(?) ";
+    public int criarProjeto(String nomeProjeto) {
+        String sql = "INSERT INTO projeto (nome) VALUES (?)";
+        int projetoId = -1; // Valor padrão para indicar falha na inserção
+        
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
             stmt.setString(1, nomeProjeto);
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+            
+            if (rowsAffected == 1) {
+                // Se a inserção for bem-sucedida, obtenha o ID gerado
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        projetoId = generatedKeys.getInt(1);
+                    } else {
+                        // Caso o ID não seja gerado, imprima um aviso
+                        System.err.println("Falha ao obter o ID do projeto gerado.");
+                    }
+                }
+            } else {
+                // Caso nenhuma linha seja afetada, imprima um aviso
+                System.err.println("Nenhuma linha afetada ao inserir o projeto.");
+            }
+            
         } catch (SQLException e) {
             e.printStackTrace();
             // Lidar com exceções de SQL, se necessário
         }  
         
+        return projetoId; // Retornar o ID do projeto (ou -1 se falhar)
     }
 
     @Override
@@ -172,12 +194,12 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
     }
 
     @Override
-    public void removerUsuarioProjeto(Usuario usuario, int idProjeto) {
+    public void removerUsuarioProjeto(UsuarioProjeto usuario, int idProjeto) {
         String sql = "DELETE FROM usuarioProjeto WHERE usuario = ? AND projeto = ?";
         
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, usuario.getLogin());
+            stmt.setString(1, usuario.getUsuarioLogin());
             stmt.setInt(2, idProjeto);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -185,36 +207,55 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
             // Lidar com exceções de SQL, se necessário
         }
     }
+   
     @Override
-    public void adionarUsuarioProjeto(Usuario usuario, int idProjeto, String nomeFuncao) {
-    // Consulta SQL para obter o ID da função com base no nome fornecido
-    String sqlConsultaFuncao = "SELECT id FROM funcao WHERE nome = ?";
+    public UsuarioProjeto adionarUsuarioProjeto(UsuarioIF usuario, int idProjeto, String nomeFuncao) throws TipoUsuarioInvalidoException {
+        UserFactory factoryUser = UserFactory.getInstance();
+        UsuarioProjeto usuarioProjeto = null;
 
-    try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-        PreparedStatement stmtConsultaFuncao = conn.prepareStatement(sqlConsultaFuncao)) {
-        stmtConsultaFuncao.setString(1, nomeFuncao);
-        try (ResultSet rs = stmtConsultaFuncao.executeQuery()) {
-            if (rs.next()) {
-                int idFuncao = rs.getInt("id");
+        try {
+            // Consulta SQL para obter o ID da função com base no nome fornecido
+            String sqlConsultaFuncao = "SELECT id FROM funcao WHERE nome = ?";
+
+            // Conexão com o banco de dados
+            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                PreparedStatement stmtConsultaFuncao = conn.prepareStatement(sqlConsultaFuncao)) {
                 
-                // Se a função for encontrada, execute a operação SQL para adicionar o usuário ao projeto
-                String sqlAdicionarUsuarioProjeto = "INSERT INTO usuarioProjeto (usuario, projeto, funcao) VALUES (?, ?, ?)";
-                try (PreparedStatement stmtAdicionarUsuarioProjeto = conn.prepareStatement(sqlAdicionarUsuarioProjeto)) {
-                    stmtAdicionarUsuarioProjeto.setString(1, usuario.getLogin());
-                    stmtAdicionarUsuarioProjeto.setInt(2, idProjeto);
-                    stmtAdicionarUsuarioProjeto.setInt(3, idFuncao);
-                    stmtAdicionarUsuarioProjeto.executeUpdate();
+                // Definindo o nome da função na consulta SQL
+                stmtConsultaFuncao.setString(1, nomeFuncao);
+
+                // Executando a consulta e obtendo o resultado
+                try (ResultSet rs = stmtConsultaFuncao.executeQuery()) {
+                    if (rs.next()) {
+                        int idFuncao = rs.getInt("id");
+
+                        // Se a função for encontrada, execute a operação SQL para adicionar o usuário ao projeto
+                        String sqlAdicionarUsuarioProjeto = "INSERT INTO usuarioProjeto (usuario, projeto, funcao) VALUES (?, ?, ?)";
+                        try (PreparedStatement stmtAdicionarUsuarioProjeto = conn.prepareStatement(sqlAdicionarUsuarioProjeto)) {
+                            stmtAdicionarUsuarioProjeto.setString(1, usuario.getLogin());
+                            stmtAdicionarUsuarioProjeto.setInt(2, idProjeto);
+                            stmtAdicionarUsuarioProjeto.setInt(3, idFuncao);
+                            
+                            // Executando a inserção
+                            stmtAdicionarUsuarioProjeto.executeUpdate();
+
+                            // Criando o objeto UsuarioProjeto após a inserção bem-sucedida
+                           usuarioProjeto = factoryUser.getProjectUser(nomeFuncao, usuario.getLogin(), idProjeto);
+
+                           return usuarioProjeto;
+                        }
+                    } else {
+                        // Lidar com a situação em que a função não é encontrada
+                        throw new TipoUsuarioInvalidoException("Função não encontrada: " + nomeFuncao);
+                    }
                 }
-            } else {
-                System.out.println("Função não encontrada: " + nomeFuncao);
-                // Lidar com a situação em que a função não é encontrada
             }
+        } catch (SQLException e) {
+            // Lidar com exceções de SQL, se necessário
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        // Lidar com exceções de SQL, se necessário
-    }
-        
+
+        return usuarioProjeto;
     }
 
     @Override
@@ -379,7 +420,7 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
         }
     }
     @Override
-    public void updateStatusCartao(UsuarioProjeto gerente, int idCartao, UsuarioProjeto solicitante, String novoStatus) {
+    public void updateStatusCartao(int idCartao, String novoStatus) {
         String sql = "UPDATE cartoes SET status = ? WHERE id = ?";
         
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -406,15 +447,15 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
         }
     }
     @Override
-    public void createCartao(Kanban kanbanAssociado, String nome, String texto) {
+    public void createCartao(Cartao novCartao) {
         String sql = "INSERT INTO cartoes (nome, texto, status, kanban) VALUES (?, ?, ?, ?)";
         
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nome);
-            stmt.setString(2, texto);
+            stmt.setString(1, novCartao.getNome());
+            stmt.setString(2, novCartao.getTexto());
             stmt.setString(3, "Em andamento");
-            stmt.setInt(4, kanbanAssociado.getId()); // Supondo que você tenha um método getId() na classe Kanban para obter o ID do kanban
+            stmt.setInt(4, novCartao.getKanban()); // Supondo que você tenha um método getId() na classe Kanban para obter o ID do kanban
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -505,6 +546,85 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
             e.printStackTrace();
             // Lidar com exceções de SQL, se necessário
         }
+    }
+
+    @Override
+    public UsuarioProjeto getUsuarioProjetoPorId(String idUsuarioProjeto, int idProjeto) throws TipoUsuarioInvalidoException {
+        String sql = "SELECT * FROM usuarioProjeto WHERE id = ? AND projeto = ?";
+        UsuarioProjeto usuarioProjeto = null;
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, idUsuarioProjeto);
+            stmt.setInt(2, idProjeto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    // Se o usuário do projeto for encontrado, crie um objeto UsuarioProjeto com os dados do ResultSet e retorne
+                    String login = rs.getString("usuario");
+                    int idFuncao = rs.getInt("funcao");
+                    String nomeFuncao = consultarNomeFuncaoPorId(idFuncao);
+
+                    UserFactoryIF userFactory = UserFactory.getInstance();
+                    usuarioProjeto = userFactory.getProjectUser(nomeFuncao, login, idProjeto);
+                } else {
+                    // Se nenhum usuário for encontrado, você pode lançar uma exceção ou retornar um valor padrão
+                    throw new TipoUsuarioInvalidoException("Nenhum usuário encontrado com o ID fornecido.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
+
+        return usuarioProjeto;
+    }
+
+    @Override
+    public String consultarNomeFuncaoPorId(int idFuncao) {
+        String nomeFuncao = null;
+        String sqlConsultaFuncao = "SELECT nome FROM funcao WHERE id = ?";
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sqlConsultaFuncao)) {
+            stmt.setInt(1, idFuncao);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    nomeFuncao = rs.getString("nome");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
+        
+        return nomeFuncao;
+    }
+
+    @Override
+    public UsuarioIF getUsuarioPorId(String idUsuario) {
+        String sql = "SELECT * FROM usuarios WHERE id = ?";
+        UsuarioIF usuario = null;
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, idUsuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    // Se o usuário for encontrado, crie um objeto Usuario com os dados do ResultSet e retorne
+                    String nome = rs.getString("nome");
+                    String login = rs.getString("login");
+                    String senha = rs.getString("senha");
+                    UserFactoryIF userFactory = UserFactory.getInstance(); 
+                    usuario = userFactory.getSystemUser(nome, login, senha);
+                    return usuario;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
+        
+        return usuario;
     }
 
 }

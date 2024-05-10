@@ -2,12 +2,12 @@ package domain;
 
 public class UsuarioProjeto {
     private int id;
-    private ProjetoIF projeto;
+    private int projeto;
     private String loginUsuario;
     private FuncaoIF funcao;
 
-    public UsuarioProjeto(ProjetoIF projeto,String loginUsuario,FuncaoIF funcao){
-        this.projeto = projeto;
+    public UsuarioProjeto(int idProjeto,String loginUsuario,FuncaoIF funcao){
+        this.projeto = idProjeto;
         this.loginUsuario = loginUsuario;
         this.funcao = funcao;
     }
@@ -15,7 +15,7 @@ public class UsuarioProjeto {
     public FuncaoIF getFuncao() {
         return funcao;
     }
-    public ProjetoIF getProjeto() {
+    public int getProjeto() {
         return projeto;
     }
     public String getUsuarioLogin() {

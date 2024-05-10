@@ -3,6 +3,7 @@ package controller;
 import domain.UserFactory;
 import domain.ProjetoIF;
 import domain.Usuario;
+import domain.UsuarioIF;
 import domain.UsuarioProjeto;
 import infra.service.ServicePersistenceIF;
 import infra.service.ServicePersistenceFactory;
@@ -25,10 +26,11 @@ public static synchronized ProjetoController getInstance(String bdType){
     return instance;
 }
 
-public void criarProjeto(String nome){
+public int criarProjeto(String nome){
     //adicionar catch
     ServicePersistenceIF servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
-    servicePersistence.criarProjeto(nome);
+    int idProjeto = servicePersistence.criarProjeto(nome);
+    return idProjeto;
 }
 
 public String getUsuariosProjeto(int idProjeto){
@@ -69,7 +71,7 @@ private void getUsers(ProjetoIF projeto, String userJson) throws TipoUsuarioInva
             String funcao = extrairCampo(registro, "funcao");
             try {
 
-                UsuarioProjeto usuarioProjeto = userFactory.getProjectUser(funcao, login,projeto);
+                UsuarioProjeto usuarioProjeto = userFactory.getProjectUser(funcao, login,projeto.getId());
                 usuarioProjeto.setId(id);
                 projeto.adicionarUsuario(usuarioProjeto, funcao);
             } catch (TipoUsuarioInvalidoException e) {
@@ -86,14 +88,24 @@ private String extrairCampo(String registro,String campo){
 }
 
 
-public void removerUsuarioProjeto(Usuario usuario, int idProjeto){
+public void removerUsuarioProjeto(UsuarioProjeto usuario, int idProjeto){
     ServicePersistenceIF servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
     servicePersistence.removerUsuarioProjeto(usuario, idProjeto);
 }
 
-public void adionarUsuarioProjeto(Usuario usuario, int idProjeto, String nomeFuncao){
+public void adionarUsuarioProjeto(UsuarioIF usuario, int idProjeto, String nomeFuncao)throws TipoUsuarioInvalidoException{
     ServicePersistenceIF servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
-    servicePersistence.adionarUsuarioProjeto(usuario, idProjeto, nomeFuncao);
+    try{servicePersistence.adionarUsuarioProjeto(usuario, idProjeto, nomeFuncao);}
+    catch(TipoUsuarioInvalidoException e){throw new TipoUsuarioInvalidoException(e.getMessage());}
+}
+
+public UsuarioProjeto buscarUsuarioProjetoPorLogin(String login,int idProjeto) throws TipoUsuarioInvalidoException{
+    ServicePersistenceIF servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
+    try{
+        UsuarioProjeto usuario = servicePersistence.getUsuarioProjetoPorId(login,idProjeto);
+        return usuario;
+    }
+    catch(TipoUsuarioInvalidoException e){throw new TipoUsuarioInvalidoException(e.getMessage());}
 }
 
 }

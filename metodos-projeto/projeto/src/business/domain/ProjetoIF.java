@@ -10,6 +10,6 @@ public interface ProjetoIF {
     Map<String, List<UsuarioProjeto>> getUsuariosPorProjeto();
 
     void adicionarUsuario(UsuarioProjeto usuario, String tipo);
-
+    void setId(int id);
     List<UsuarioProjeto> getUsuariosPorTipo(String tipo);
 }

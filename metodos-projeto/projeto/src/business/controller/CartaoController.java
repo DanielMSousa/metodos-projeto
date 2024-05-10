@@ -6,21 +6,26 @@ import domain.UsuarioProjeto;
 import infra.service.ServicePersistenceFactory;
 import infra.service.ServicePersistenceIF;
 
-public class CartaoUsuarioController {
+public class CartaoController {
     private final String type;
     
-    public CartaoUsuarioController(String dbName) {
+    public CartaoController(String dbName) {
         this.type = dbName;
     }
 
     // Método para adicionar um novo cartão de usuário
-    public CartaoUsuario getCartaoUsuario(int idCartao,int idUsuario){
-        return CartaoUsuario.createCartaoUsuario(idCartao, idUsuario);
+    public Cartao getCartaoUsuario(String status, int kanban, String nome, String texto){
+        return Cartao.getCartao(status, kanban, nome, texto);
     }
 
-    public void adicionarCartaoUsuario(Cartao cartao, UsuarioProjeto usuario) {
+    public void adicionarCartao(Cartao cartao) {
         ServicePersistenceIF servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
-        servicePersistence.addUsuarioCartao(cartao, usuario);
+        servicePersistence.createCartao(cartao);
+    }
+
+    public void alterarStatusCartao(Cartao cartao){
+        ServicePersistenceIF servicePersistence =ServicePersistenceFactory.criarServicePersistence(type);
+        servicePersistence.updateStatusCartao(cartao.getId(),cartao.getStatus());
     }
 
     // Método para excluir um cartão de usuário

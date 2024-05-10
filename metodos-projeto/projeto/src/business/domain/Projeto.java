@@ -39,4 +39,8 @@ public class Projeto implements ProjetoIF {
     public List<UsuarioProjeto> getUsuariosPorTipo(String tipo) {
         return usuariosPorProjeto.getOrDefault(tipo, new ArrayList<>());
     }
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
 }

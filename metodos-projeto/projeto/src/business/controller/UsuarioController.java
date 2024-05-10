@@ -1,6 +1,7 @@
 package controller;
 
 import domain.UserFactory;
+import domain.Usuario;
 import domain.UsuarioIF;
 import infra.service.ServicePersistenceIF;
 import infra.service.ServicePersistenceFactory;
@@ -103,6 +104,13 @@ public class UsuarioController{
         String usuariosProjetoJSON = servicePersistence.getUsuarios();
         
         return usuariosProjetoJSON;
+    }
+
+    public UsuarioIF getUsuarioId(String login){
+        ServicePersistenceIF servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);        
+        UsuarioIF user = servicePersistence.getUsuarioPorId(login);
+
+        return user;
     }
 
     

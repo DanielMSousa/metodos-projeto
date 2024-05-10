@@ -16,10 +16,10 @@ public interface ServicePersistenceIF {
     void atualizarUsuario(UsuarioIF usuario);
     void excluirUsuario(String login) throws LoginExisteException,TipoUsuarioInvalidoException;
     UsuarioIF buscarUsuarioPorLogin(String Login) throws TipoUsuarioInvalidoException;
-    void criarProjeto(String nomeProjeto);
+    int criarProjeto(String nomeProjeto);
     String getUsuariosProjeto(int idProjeto);
-    void removerUsuarioProjeto(Usuario usuario, int idProjeto);
-    void adionarUsuarioProjeto(Usuario usuario,int idProjeto,String nomeFuncao);
+    void removerUsuarioProjeto(UsuarioProjeto usuario, int idProjeto);
+    UsuarioProjeto adionarUsuarioProjeto(UsuarioIF usuario,int idProjeto,String nomeFuncao) throws TipoUsuarioInvalidoException;
     void removerProjeto(int idProjeto);
     void alterarNomeProjeto(int idProjeto, String novoNome);
     String getUsuarios();
@@ -27,15 +27,17 @@ public interface ServicePersistenceIF {
     String getKanban(int idKanban);
     // tem que ter um kanban inexistente
     void addUsuarioCartao(Cartao idCartao,UsuarioProjeto atribuinte);
-    void createCartao(Kanban kanbanAssociado,String nome,String texto);
+    void createCartao(Cartao cartao);
     String getCartoesUsuario(String loger);
     String getCartoesProjeto(int idProjeto);
-    void updateStatusCartao(UsuarioProjeto gerente, int idCartao,UsuarioProjeto solicitante,String novoStatus);
+    void updateStatusCartao(int idCartao,String novoStatus);
     void removeCartao(UsuarioProjeto gerente,int idCartao);
     void createKanban(Kanban kanban);
     void updateNomeKanban(int idKanban,String nome);
     void removeCartaoUsuario(UsuarioProjeto id,CartaoUsuario idCartaoUsuario);
-    
+    UsuarioProjeto getUsuarioProjetoPorId(String idUsuarioProjeto,int idProjeto) throws TipoUsuarioInvalidoException;
+    String consultarNomeFuncaoPorId(int idFuncao);
+    UsuarioIF getUsuarioPorId(String idUsuario);
     // todos os metodos podem ter sua logica implementada na fachada
     //Tem mais ainda
 }

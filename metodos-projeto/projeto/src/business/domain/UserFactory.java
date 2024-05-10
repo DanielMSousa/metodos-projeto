@@ -17,10 +17,10 @@ public class UserFactory implements UserFactoryIF{
         return new Usuario(nome, login, senha);
     }
     @Override
-    public  UsuarioProjeto getProjectUser(String userType, String login, ProjetoIF projeto)throws TipoUsuarioInvalidoException{
+    public  UsuarioProjeto getProjectUser(String userType, String login, int idProjeto)throws TipoUsuarioInvalidoException{
         try{
             FuncaoIF funcao = FunctionFactory.getUserFunction(userType);
-            return new UsuarioProjeto(projeto, login, funcao);
+            return new UsuarioProjeto(idProjeto, login, funcao);
         }
         catch(TipoUsuarioInvalidoException e){throw new TipoUsuarioInvalidoException(e.getMessage());}
         
