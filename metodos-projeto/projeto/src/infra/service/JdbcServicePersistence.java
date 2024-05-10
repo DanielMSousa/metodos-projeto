@@ -297,46 +297,195 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
         
         return projeto;
     }
+
     @Override
-    public CartaoUsuario getCartoes(String loger) {
-        // TODO Auto-generated method stub
-        return null;
+    public String getCartoesUsuario(String loger) {
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("[");
+        
+        String sql = "SELECT c.id, c.status, c.nome, c.texto " +
+                    "FROM cartoes c " +
+                    "JOIN cartaoUsuario cu ON c.id = cu.cartao " +
+                    "WHERE cu.usuario = ?";
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, loger);
+            try (ResultSet rs = stmt.executeQuery()) {
+                boolean first = true;
+                while (rs.next()) {
+                    if (!first) {
+                        jsonBuilder.append(",");
+                    } else {
+                        first = false;
+                    }
+                    jsonBuilder.append("{");
+                    jsonBuilder.append("\"id\": ").append(rs.getInt("id")).append(",");
+                    jsonBuilder.append("\"status\": \"").append(rs.getString("status")).append("\",");
+                    jsonBuilder.append("\"nome\": \"").append(rs.getString("nome")).append("\",");
+                    jsonBuilder.append("\"texto\": \"").append(rs.getString("texto")).append("\"");
+                    jsonBuilder.append("}");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+            return null;
+        }
+
+        jsonBuilder.append("]");
+
+        return jsonBuilder.toString();
     }
     @Override
-    public Kanban getKanban(int idKanban) {
-        // TODO Auto-generated method stub
-        return null;
+    public String getKanban(int idKanban) {
+        StringBuilder jsonBuilder = new StringBuilder();
+        
+        String sql = "SELECT * FROM kanban WHERE id = ?";
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idKanban);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    jsonBuilder.append("{");
+                    jsonBuilder.append("\"id\": ").append(idKanban).append(",");
+                    jsonBuilder.append("\"nome\": \"").append(rs.getString("nome")).append("\"");
+                    jsonBuilder.append("}");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+            return null;
+        }
+
+        return jsonBuilder.toString();
     }
     @Override
     public void addUsuarioCartao(int idCartao, UsuarioProjeto gerente, UsuarioProjeto atribuinte) {
-        // TODO Auto-generated method stub
+        String sql = "INSERT INTO cartaoUsuario (cartao, usuario) VALUES (?, ?)";
         
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idCartao);
+            stmt.setInt(2, atribuinte.getId()); // Suponha que você tenha um método getId() na classe UsuarioProjeto para obter o ID do usuário
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lide com exceções de SQL aqui, se necessário
+        }
     }
     @Override
-    public void updateStatusCartao(UsuarioProjeto gerente, int idCartao, UsuarioProjeto solicitante,
-            String novoStatus) {
-        // TODO Auto-generated method stub
+    public void updateStatusCartao(UsuarioProjeto gerente, int idCartao, UsuarioProjeto solicitante, String novoStatus) {
+        String sql = "UPDATE cartoes SET status = ? WHERE id = ?";
         
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, novoStatus);
+            stmt.setInt(2, idCartao);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
     }
     @Override
     public void removeCartao(UsuarioProjeto gerente, int idCartao) {
-        // TODO Auto-generated method stub
+        String sql = "DELETE FROM cartoes WHERE id = ?";
         
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idCartao);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
     }
     @Override
     public void createCartao(Kanban kanbanAssociado, String nome, String texto) {
-        // TODO Auto-generated method stub
+        String sql = "INSERT INTO cartoes (nome, texto, status, kanban) VALUES (?, ?, ?, ?)";
         
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            stmt.setString(2, texto);
+            stmt.setString(3, "Em andamento");
+            stmt.setInt(4, kanbanAssociado.getId()); // Supondo que você tenha um método getId() na classe Kanban para obter o ID do kanban
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
     }
     @Override
     public void createKanban(int idProjeto, String nomeKanban) {
-        // TODO Auto-generated method stub
+        String sql = "INSERT INTO kanban (nome, projeto) VALUES (?, ?)";
         
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nomeKanban);
+            stmt.setInt(2, idProjeto);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
     }
     @Override
     public void updateNomeKanban(int idKanban, String nome) {
-        // TODO Auto-generated method stub
+        String sql = "UPDATE kanban SET nome = ? WHERE id = ?";
         
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            stmt.setInt(2, idKanban);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+        }
+    }
+
+    @Override
+    public String getCartoesProjeto(int idProjeto) {
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("[");
+        
+        String sql = "SELECT c.id, c.status, c.nome, c.texto " +
+                    "FROM cartoes c " +
+                    "JOIN kanban k ON c.kanban = k.id " +
+                    "WHERE k.projeto = ?";
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idProjeto);
+            try (ResultSet rs = stmt.executeQuery()) {
+                boolean first = true;
+                while (rs.next()) {
+                    if (!first) {
+                        jsonBuilder.append(",");
+                    } else {
+                        first = false;
+                    }
+                    jsonBuilder.append("{");
+                    jsonBuilder.append("\"id\": ").append(rs.getInt("id")).append(",");
+                    jsonBuilder.append("\"status\": \"").append(rs.getString("status")).append("\",");
+                    jsonBuilder.append("\"nome\": \"").append(rs.getString("nome")).append("\",");
+                    jsonBuilder.append("\"texto\": \"").append(rs.getString("texto")).append("\"");
+                    jsonBuilder.append("}");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Lidar com exceções de SQL, se necessário
+            return null;
+        }
+
+        jsonBuilder.append("]");
+
+        return jsonBuilder.toString();
     }
 
 }
