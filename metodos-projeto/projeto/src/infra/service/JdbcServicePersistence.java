@@ -6,11 +6,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import domain.OperadorSistemaFactory;
+import domain.UserFactory;
 import domain.ProjectFactory;
 import domain.ProjetoIF;
 import domain.Usuario;
-import domain.userIF;
+import domain.usuarioIF;
 import infra.utils.Exception.CriacaoLoginSenha.LoginExisteException;
 import infra.utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 
@@ -25,7 +25,7 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
     }
 
     @Override
-    public userIF buscarUsuarioPorLogin(String login) throws TipoUsuarioInvalidoException {
+    public usuarioIF buscarUsuarioPorLogin(String login) throws TipoUsuarioInvalidoException {
         String sql = "SELECT * FROM usuarios WHERE login = ?";
         
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -36,7 +36,7 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
                     // Se o usuário for encontrado, crie um objeto Usuario com os dados do ResultSet e retorne
                     String nome = rs.getString("nome");
                     String senha = rs.getString("senha");
-                    return OperadorSistemaFactory.GetUsuario("criar", login, nome, senha);
+                    return UserFactory.getSystemUser(login, nome, senha);
                 }
             }
         } catch (SQLException e) {
@@ -49,7 +49,7 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
     
 
     @Override
-    public void criarUsuario(userIF usuario) throws LoginExisteException, TipoUsuarioInvalidoException {
+    public void criarUsuario(usuarioIF usuario) throws LoginExisteException, TipoUsuarioInvalidoException {
         try{
         if (buscarUsuarioPorLogin(usuario.getLogin()) != null) {
             throw new LoginExisteException("Login já existe");
@@ -71,7 +71,7 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
     }
 
     @Override
-    public void atualizarUsuario(userIF usuario) {
+    public void atualizarUsuario(usuarioIF usuario) {
         if(usuario instanceof Usuario){
         String sql = "UPDATE usuarios SET nome = ?, senha = ? WHERE login = ?";
         

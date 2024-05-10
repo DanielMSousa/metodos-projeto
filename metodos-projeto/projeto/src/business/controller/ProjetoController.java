@@ -1,9 +1,9 @@
 package controller;
 
-import domain.OperadorSistemaFactory;
+import domain.UserFactory;
 import domain.ProjetoIF;
 import domain.Usuario;
-import domain.userIF;
+import domain.funcaoIF;
 import infra.service.ServicePersistenceIF;
 import infra.service.ServicePersistenceFactory;
 import infra.utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
@@ -69,7 +69,7 @@ private void getUsers(ProjetoIF projeto,String userJson) throws TipoUsuarioInval
             String nome = extrairCampo(campos[2], "nome");
             String funcao = extrairCampo(campos[3], "funcao");
             try{
-            userIF usuario = OperadorSistemaFactory.GetUsuario(funcao, login, nome, "");
+            funcaoIF usuario = UserFactory.getUserFunction(funcao, login, nome);
             projeto.adicionarUsuario(usuario, funcao);
             }catch(TipoUsuarioInvalidoException e){
                 throw new TipoUsuarioInvalidoException(e.getMessage());

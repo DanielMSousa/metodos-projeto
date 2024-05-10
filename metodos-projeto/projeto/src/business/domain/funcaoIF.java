@@ -1,10 +1,9 @@
 package domain;
 
-public interface userIF {
+public interface funcaoIF {
     String getNome();
     String getLogin();
-    String getSenha();
     void setNome(String nome);
     void setLogin(String login);
-    void setSenha(String senha);
 }
+
