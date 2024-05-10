@@ -1,6 +1,6 @@
 package domain;
 
-public class Usuario implements usuarioIF{
+public class Usuario implements UsuarioIF{
     private String login;
     private String nome;
     private String senha;

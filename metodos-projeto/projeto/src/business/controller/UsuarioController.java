@@ -1,7 +1,7 @@
 package controller;
 
 import domain.UserFactory;
-import domain.usuarioIF;
+import domain.UsuarioIF;
 import infra.service.ServicePersistenceIF;
 import infra.service.ServicePersistenceFactory;
 import infra.utils.Exception.CriacaoLoginSenha.LoginExisteException;
@@ -40,7 +40,7 @@ public class UsuarioController{
             throw new SenhaInvalidaException("Formato de senha inválida" + e);
         }
         try{
-        usuarioIF novoUsuario = UserFactory.getSystemUser(login,nome,senha);
+        UsuarioIF novoUsuario = UserFactory.getSystemUser(login,nome,senha);
         ServicePersistenceIF servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
         servicePersistence.criarUsuario(novoUsuario);
         } catch (LoginExisteException e) {
@@ -61,13 +61,13 @@ public class UsuarioController{
         }
     }
 
-    public usuarioIF updateUsuario(String login, String novoNome, String novaSenha) {
+    public UsuarioIF updateUsuario(String login, String novoNome, String novaSenha) {
         try {
             // Cria uma instância do serviço de persistência
             ServicePersistenceIF servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
             
             // Busca o usuário com base no login
-            usuarioIF usuario = servicePersistence.buscarUsuarioPorLogin(login);
+            UsuarioIF usuario = servicePersistence.buscarUsuarioPorLogin(login);
             
             // Verifica se o usuário foi encontrado
             if (usuario != null) {

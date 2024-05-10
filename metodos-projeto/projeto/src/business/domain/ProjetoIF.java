@@ -7,9 +7,9 @@ public interface ProjetoIF {
 
     String getNome();
 
-    Map<String, List<funcaoIF>> getUsuariosPorProjeto();
+    Map<String, List<FuncaoIF>> getUsuariosPorProjeto();
 
-    void adicionarUsuario(funcaoIF usuario, String tipo);
+    void adicionarUsuario(FuncaoIF usuario, String tipo);
 
-    List<funcaoIF> getUsuariosPorTipo(String tipo);
+    List<FuncaoIF> getUsuariosPorTipo(String tipo);
 }

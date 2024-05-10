@@ -10,7 +10,7 @@ import domain.UserFactory;
 import domain.ProjectFactory;
 import domain.ProjetoIF;
 import domain.Usuario;
-import domain.usuarioIF;
+import domain.UsuarioIF;
 import infra.utils.Exception.CriacaoLoginSenha.LoginExisteException;
 import infra.utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 
@@ -25,7 +25,7 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
     }
 
     @Override
-    public usuarioIF buscarUsuarioPorLogin(String login) throws TipoUsuarioInvalidoException {
+    public UsuarioIF buscarUsuarioPorLogin(String login) throws TipoUsuarioInvalidoException {
         String sql = "SELECT * FROM usuarios WHERE login = ?";
         
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -49,7 +49,7 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
     
 
     @Override
-    public void criarUsuario(usuarioIF usuario) throws LoginExisteException, TipoUsuarioInvalidoException {
+    public void criarUsuario(UsuarioIF usuario) throws LoginExisteException, TipoUsuarioInvalidoException {
         try{
         if (buscarUsuarioPorLogin(usuario.getLogin()) != null) {
             throw new LoginExisteException("Login já existe");
@@ -71,7 +71,7 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
     }
 
     @Override
-    public void atualizarUsuario(usuarioIF usuario) {
+    public void atualizarUsuario(UsuarioIF usuario) {
         if(usuario instanceof Usuario){
         String sql = "UPDATE usuarios SET nome = ?, senha = ? WHERE login = ?";
         

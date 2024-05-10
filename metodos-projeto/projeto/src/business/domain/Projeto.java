@@ -7,7 +7,7 @@ import java.util.Map;
 public class Projeto implements ProjetoIF {
     private int id;
     private String nome;
-    private Map<String, List<funcaoIF>> usuariosPorProjeto;
+    private Map<String, List<FuncaoIF>> usuariosPorProjeto;
 
     public Projeto(int id,String nome) {
         this.id = id;
@@ -23,11 +23,11 @@ public class Projeto implements ProjetoIF {
         return this.nome;
     }
     @Override
-    public Map<String, List<funcaoIF>> getUsuariosPorProjeto() {
+    public Map<String, List<FuncaoIF>> getUsuariosPorProjeto() {
         return this.usuariosPorProjeto;
     }
     @Override
-    public void adicionarUsuario(funcaoIF usuario, String tipo) {
+    public void adicionarUsuario(FuncaoIF usuario, String tipo) {
         // Verifica se já existe uma lista de usuários para o tipo especificado
         if (!usuariosPorProjeto.containsKey(tipo)) {
             usuariosPorProjeto.put(tipo, new ArrayList<>());
@@ -36,7 +36,7 @@ public class Projeto implements ProjetoIF {
         usuariosPorProjeto.get(tipo).add(usuario);
     }
     @Override
-    public List<funcaoIF> getUsuariosPorTipo(String tipo) {
+    public List<FuncaoIF> getUsuariosPorTipo(String tipo) {
         return usuariosPorProjeto.getOrDefault(tipo, new ArrayList<>());
     }
 }

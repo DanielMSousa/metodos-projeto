@@ -3,16 +3,15 @@ package infra.service;
 
 import domain.ProjetoIF;
 import domain.Usuario;
-import domain.funcaoIF;
-import domain.usuarioIF;
+import domain.UsuarioIF;
 import infra.utils.Exception.CriacaoLoginSenha.LoginExisteException;
 import infra.utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 
 public interface ServicePersistenceIF {
-    void criarUsuario(usuarioIF novoUsuario) throws LoginExisteException, TipoUsuarioInvalidoException;
-    void atualizarUsuario(usuarioIF usuario);
+    void criarUsuario(UsuarioIF novoUsuario) throws LoginExisteException, TipoUsuarioInvalidoException;
+    void atualizarUsuario(UsuarioIF usuario);
     void excluirUsuario(String login) throws LoginExisteException,TipoUsuarioInvalidoException;
-    usuarioIF buscarUsuarioPorLogin(String Login) throws TipoUsuarioInvalidoException;
+    UsuarioIF buscarUsuarioPorLogin(String Login) throws TipoUsuarioInvalidoException;
     void criarProjeto(String nomeProjeto);
     String getUsuariosProjeto(int idProjeto);
     void removerUsuarioProjeto(Usuario usuario, int idProjeto);

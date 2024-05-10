@@ -3,7 +3,7 @@ package domain;
 import infra.utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 
 public class UserFactory {
-    public static funcaoIF getUserFunction(String tipo, String login, String nome) throws TipoUsuarioInvalidoException {
+    public static FuncaoIF getUserFunction(String tipo, String login, String nome) throws TipoUsuarioInvalidoException {
         if ("gerente".equalsIgnoreCase(tipo)) {
             return new Gerente(nome, login);
         } else if ("programador".equalsIgnoreCase(tipo)) {
@@ -15,7 +15,7 @@ public class UserFactory {
         }
     }
     
-    public static usuarioIF getSystemUser(String nome, String login, String senha) {
+    public static UsuarioIF getSystemUser(String nome, String login, String senha) {
         return new Usuario(nome, login, senha);
     }
 }
