@@ -7,10 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import domain.UserFactory;
+import domain.CartaoUsuario;
+import domain.Kanban;
 import domain.ProjectFactory;
 import domain.ProjetoIF;
 import domain.Usuario;
 import domain.UsuarioIF;
+import domain.UsuarioProjeto;
 import infra.utils.Exception.CriacaoLoginSenha.LoginExisteException;
 import infra.utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 
@@ -294,4 +297,46 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
         
         return projeto;
     }
+    @Override
+    public CartaoUsuario getCartoes(String loger) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public Kanban getKanban(int idKanban) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public void addUsuarioCartao(int idCartao, UsuarioProjeto gerente, UsuarioProjeto atribuinte) {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public void updateStatusCartao(UsuarioProjeto gerente, int idCartao, UsuarioProjeto solicitante,
+            String novoStatus) {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public void removeCartao(UsuarioProjeto gerente, int idCartao) {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public void createCartao(Kanban kanbanAssociado, String nome, String texto) {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public void createKanban(int idProjeto, String nomeKanban) {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public void updateNomeKanban(int idKanban, String nome) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
