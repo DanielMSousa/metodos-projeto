@@ -16,6 +16,7 @@ import infra.utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 
 public class JdbcServicePersistence implements ServicePersistenceIF {
     private  final static String URL = "jdbc:mysql://localhost/Trellotion";
+    private  final UserFactory userFactory = UserFactory.getInstance();
     private  final String USER;
     private  final String PASSWORD;
 
@@ -36,7 +37,7 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
                     // Se o usuário for encontrado, crie um objeto Usuario com os dados do ResultSet e retorne
                     String nome = rs.getString("nome");
                     String senha = rs.getString("senha");
-                    return UserFactory.getSystemUser(login, nome, senha);
+                    return userFactory.getSystemUser(login, nome, senha);
                 }
             }
         } catch (SQLException e) {
@@ -129,14 +130,14 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
         jsonBuilder.append("{");
         jsonBuilder.append("\"projetoId\": ").append(idProjeto).append(",");
         jsonBuilder.append("\"usuarios\": [");
-    
+
         String sql = "SELECT u.login, u.nome, up.funcao " +
-                     "FROM usuarios u " +
-                     "JOIN usuarioProjeto up ON u.login = up.usuario " +
-                     "WHERE up.projeto = ?";
-    
+                    "FROM usuarios u " +
+                    "JOIN usuariosprojeto up ON u.login = up.usuario " +
+                    "WHERE up.projeto = ?";
+
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idProjeto);
             try (ResultSet rs = stmt.executeQuery()) {
                 boolean first = true;
@@ -158,10 +159,10 @@ public class JdbcServicePersistence implements ServicePersistenceIF {
             // Lidar com exceções de SQL, se necessário
             return null;
         }
-    
+
         jsonBuilder.append("]");
         jsonBuilder.append("}");
-    
+
         return jsonBuilder.toString();
     }
 

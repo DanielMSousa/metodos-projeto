@@ -1,7 +1,7 @@
 package domain;
 
 public class AnalistaSistemas extends FuncaoSistema {
-    public AnalistaSistemas(String nome, String login){
-        super(nome, login);
+    public AnalistaSistemas(int idFuncao){
+        super(idFuncao, "Analista");
     }
 }

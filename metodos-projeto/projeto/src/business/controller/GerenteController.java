@@ -1,10 +1,5 @@
 package controller;
 
-import domain.FuncaoIF;
-import domain.Gerente;
-import domain.Projeto;
-import domain.UsuarioIF;
-
 public class GerenteController {
     
     private static GerenteController instance;

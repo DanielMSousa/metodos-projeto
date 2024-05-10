@@ -3,7 +3,7 @@ package controller;
 import domain.UserFactory;
 import domain.ProjetoIF;
 import domain.Usuario;
-import domain.FuncaoIF;
+import domain.UsuarioProjeto;
 import infra.service.ServicePersistenceIF;
 import infra.service.ServicePersistenceFactory;
 import infra.utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
@@ -13,7 +13,7 @@ public class ProjetoController {
 private final String type ;
 
 private static ProjetoController instance;
-
+private final UserFactory userFactory = UserFactory.getInstance();
 private ProjetoController(String bdType){
     this.type = bdType;
 }
@@ -58,25 +58,26 @@ private void populateProject(ProjetoIF projeto)throws TipoUsuarioInvalidoExcepti
     }
 }
 
-private void getUsers(ProjetoIF projeto,String userJson) throws TipoUsuarioInvalidoException{
-    if(userJson != null && !userJson.isEmpty()){
+private void getUsers(ProjetoIF projeto, String userJson) throws TipoUsuarioInvalidoException {
+    if (userJson != null && !userJson.isEmpty()) {
         String[] registros = userJson.split(",");
 
-        for(String registro: registros){
-            String[] campos = registro.split("\\{");
+        for (String registro : registros) {
+            String idStr = extrairCampo(registro, "id");
+            int id = Integer.parseInt(idStr);
+            String login = extrairCampo(registro, "login");
+            String funcao = extrairCampo(registro, "funcao");
+            try {
 
-            String login = extrairCampo(campos[1], "login");
-            String nome = extrairCampo(campos[2], "nome");
-            String funcao = extrairCampo(campos[3], "funcao");
-            try{
-            FuncaoIF usuario = UserFactory.getUserFunction(funcao, login, nome);
-            projeto.adicionarUsuario(usuario, funcao);
-            }catch(TipoUsuarioInvalidoException e){
+                UsuarioProjeto usuarioProjeto = userFactory.getProjectUser(funcao, login,projeto);
+                usuarioProjeto.setId(id);
+                projeto.adicionarUsuario(usuarioProjeto, funcao);
+            } catch (TipoUsuarioInvalidoException e) {
                 throw new TipoUsuarioInvalidoException(e.getMessage());
             }
         }
-        }
     }
+}
 
 
 private String extrairCampo(String registro,String campo){

@@ -1,8 +1,8 @@
 package domain;
 
 public class Gerente extends FuncaoSistema {   
-    public Gerente(String nome,String login){
-        super(nome, login);
+    public Gerente(int idFuncao){
+        super(idFuncao, "Gerente");
     }
     
 }

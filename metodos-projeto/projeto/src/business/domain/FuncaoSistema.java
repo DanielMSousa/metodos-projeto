@@ -1,15 +1,11 @@
 package domain;
-import java.util.HashMap;
 
 public abstract class FuncaoSistema implements FuncaoIF {
-    private String login;
+    private int idFuncao;
     private String nome;
-    private HashMap<Integer, String> tarefas; // HashMap de tarefas
 
-    public FuncaoSistema(String login, String nome) {
-        this.login = login;
+    public FuncaoSistema(int idFuncao, String nome) {
         this.nome = nome;
-        this.tarefas = new HashMap<>(); // Inicializa o HashMap de tarefas
     }
 
     @Override
@@ -18,27 +14,9 @@ public abstract class FuncaoSistema implements FuncaoIF {
     }
 
     @Override
-    public String getLogin() {
-        return this.login;
+    public int getId() {
+        return this.idFuncao;
     }
 
-    @Override
-    public void setLogin(String login) {
-        this.login = login;
-    }
-    
-    @Override
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    @Override
-    public HashMap<Integer, String> getTarefas() {
-        return this.tarefas;
-    }
-
-    @Override
-    public void adicionarTarefa(int idTarefa, String descricao) {
-        this.tarefas.put(idTarefa, descricao);
-    }
+   
 }

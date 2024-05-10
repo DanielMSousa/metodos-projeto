@@ -11,7 +11,7 @@ import infra.utils.Exception.TipoUsuario.TipoUsuarioInvalidoException;
 import infra.utils.Validacoes.UsuarioValidator;
 public class UsuarioController{
     private final String type ;
-    
+    private final UserFactory userFactory = UserFactory.getInstance();
     private static UsuarioController instance;
 
     private UsuarioController(String bdType){
@@ -40,7 +40,7 @@ public class UsuarioController{
             throw new SenhaInvalidaException("Formato de senha inválida" + e);
         }
         try{
-        UsuarioIF novoUsuario = UserFactory.getSystemUser(login,nome,senha);
+        UsuarioIF novoUsuario = userFactory.getSystemUser(login,nome,senha);
         ServicePersistenceIF servicePersistence = ServicePersistenceFactory.criarServicePersistence(type);
         servicePersistence.criarUsuario(novoUsuario);
         } catch (LoginExisteException e) {
