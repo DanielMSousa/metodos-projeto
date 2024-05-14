@@ -1,11 +1,17 @@
 @startuml
 
-!define ENTITY_COLOR #808080
+!define ENTITY_COLOR #FFFFFF
 !define BOUNDARY_COLOR #808080
 !define MODEL_COLOR #808080
 !define SINGLETON_COLOR #008000
 !define FACADE_COLOR #0000FF
 !define LOGGER_COLOR #FFA500
+!define ADAPTER_COLOR #FFA500
+!define TEMPLATE_COLOR #FF0000
+!define FACTORY_COLOR #FFFF00
+!define MEMENTO_COLOR #800080
+!define COMMAND_COLOR #808080
+!define COMPOSITE_COLOR #FF69B4
 
 skinparam class {
     BackgroundColor White
@@ -13,48 +19,114 @@ skinparam class {
     ArrowColor Black
 }
 
-class UsuarioAbstrato << (M,ENTITY_COLOR) >>
-class GerenteModel << (M,ENTITY_COLOR) >>
-class ProgramadorModel << (M,ENTITY_COLOR) >>
-class AnalistaSistemasModel << (M,ENTITY_COLOR) >>
-class EquipeModel << (M,ENTITY_COLOR) >>
-class UsuarioService << (B,BOUNDARY_COLOR) >>
-class UserEquipeFacade << (B,FACADE_COLOR) >>
-class EquipeController << (C,SINGLETON_COLOR) >>
-class GerenteController << (C,SINGLETON_COLOR) >>
-class ProgramadorController << (C,SINGLETON_COLOR) >>
-class AnalistaSistemasController << (C,SINGLETON_COLOR) >>
-class TerminalLogger << (M,LOGGER_COLOR) >>
-class FileLogger << (M,LOGGER_COLOR) >>
-class DatabaseLogger << (M,LOGGER_COLOR) >>
+package Business{
+    package Controller{
+        class CartaoController << (C,FACTORY_COLOR)>>
+        class CartaoUsuarioController << (C,FACTORY_COLOR)>>
+        class Command <<(B,COMMAND_COLOR)>>
+        class Composite <<(B, COMPOSITE_COLOR)>>
+        class KanbanController <<(C, FACTORY_COLOR) >>
+        class Memento <<(B, MEMENTO_COLOR)>>
+        class ProjetoController <<(C, FACTORY_COLOR) >>
+        class ServiceFacade <<(C, FACADE_COLOR) >>
+        class UsuarioController << (C,FACTORY_COLOR) >>
+    }
+    package Domain{
+        class Usuario << (M,ENTITY_COLOR) >>
+        class UsuarioIF << (B, FACTORY_COLOR) >>
+        class Gerente << (M,ENTITY_COLOR) >>
+        class Programador << (M,ENTITY_COLOR) >>
+        class AnalistaSistemas << (M,ENTITY_COLOR) >>
+        class Cartao << (M,ENTITY_COLOR) >>
+        class CartaoUsuario << (M, ENTITY_COLOR) >>
+        class FuncaoIF << (M, FACTORY_COLOR) >>
+        class FuncaoSistema << (M, ENTITY_COLOR) >>
+        class FunctionFactory << (B, FACTORY_COLOR) >>
+        class Kanban <<(M,ENTITY_COLOR)>>
+        class ProjectFactory<<(B,FACTORY_COLOR) >>
+        class Projeto <<(M,ENTITY_COLOR) >>
+        class ProjetoIF <<(B,FACTORY_COLOR) >>
+        class UserFactory <<(B,FACTORY_COLOR) >>
+        class UserFactoryIF <<(B, FACTORY_COLOR) >>
+        class UsuarioProjeto <<(M, ENTITY_COLOR) >>
+    }
+}
+
+package Infra{
+    class TerminalLogger << (M,LOGGER_COLOR) >>
+    class FileLogger << (M,LOGGER_COLOR) >>
+    class DatabaseLogger << (M,LOGGER_COLOR) >>
+    class RelatorioLog<<(M,TEMPLATE_COLOR)>>
+    class RelatorioTemplate <<(M,TEMPLATE_COLOR)>>
+    class RelatorioTXT <<(M,TEMPLATE_COLOR)>>
+    package Service{
+        class JdbcServicePersistence <<(C,FACTORY_COLOR)>>
+        class ServicePesistenceFactory <<(C,FACTORY_COLOR)>>
+        class ServicePersistenceIF <<(M,FACTORY_COLOR)>>
+    }
+}
 
 legend
-    Singleton: Verde
-    Facade: Azul
+    Singleton Facade: Azul
     Adapter: Laranja
+    Template: Vermelho
+    Factory: Amarelo
+    Memento: Roxo
+    Command: Cinza
+    Composite: Rosa
 end legend
 
-GerenteModel --|> UsuarioAbstrato
-ProgramadorModel --|> UsuarioAbstrato
-AnalistaSistemasModel --|>UsuarioAbstrato
+Gerente --|> Usuario
+Programador --|> Usuario
+AnalistaSistemas --|> Usuario
+AnalistaSistemas --|> FuncaoSistema
+Gerente --|> FuncaoSistema
+Programador --|> FuncaoSistema
+
+CartaoUsuario  --  Cartao
+CartaoUsuario <-- Usuario
+
+Projeto -- "1..*" UsuarioProjeto
+UsuarioProjeto -- FuncaoIF
+
+UsuarioProjeto  --  FuncaoIF
+
+FunctionFactory ..> FuncaoIF
+ProjectFactory ..> ProjetoIF
+UserFactory ..> UsuarioIF
+UserFactory ..> UsuarioProjetoIF
+
+UsuarioProjetoIF -- UsuarioProjeto
+
+Projeto "1" -- "0..*" Kanban
+Kanban "0..*"--"1" Projeto
+
+AnalistaSistemas --|> UsuarioProjeto
+Gerente --|> UsuarioProjeto
+Programador --|> Programador
 
 
-UsuarioService  --> UserEquipeFacade
-UserEquipeFacade  -->  EquipeController
 
-EquipeController "1" -- "1..*" EquipeModel
-ProgramadorController "1" -- "1..*" ProgramadorModel
-GerenteController "1" -- "1..*" GerenteModel
-AnalistaSistemasController "1" -- "1..*" AnalistaSistemasModel
-
-
-
-UserEquipeFacade -->  ProgramadorController
-UserEquipeFacade -->  AnalistaSistemasController
-UserEquipeFacade -->  GerenteController
 
 UsuarioService  -->  TerminalLogger
 UsuarioService  -->  FileLogger
 UsuarioService  -->  DatabaseLogger
 
+CartaoController -- ServicePesistenceFactory
+CartaoController -- ServicePersistenceIF
+
+CartaoUsuarioController -- ServicePesistenceFactory
+CartaoUsuarioController -- ServicePersistenceIF
+
+KanbanController -- ServicePesistenceFactory
+KanbanController -- ServicePersistenceIF
+
+ProjetoController -- ServicePesistenceFactory
+ProjetoController -- ServicePersistenceIF
+
+ServiceFacade -- CartaoController
+ServiceFacade -- CartaoUsuarioController
+ServiceFacade -- KanbanController
+ServiceFacade -- ProjetoController
+ServiceFacade -- UsuarioController
 @enduml
